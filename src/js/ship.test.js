@@ -12,6 +12,15 @@ test("ship does not start the game sunk", () => {
   expect(result).toBe(false);
 });
 
+test("ship has original length after out of bounds hit", () => {
+  const ship = new Ship(3);
+  const result1 = ship.length;
+  expect(result1).toBe(3);
+  ship.hit(7);
+  const result2 = ship.length;
+  expect(result2).toBe(3);
+});
+
 test("ship is sunk after correct hits", () => {
   const ship = new Ship(3);
   ship.hit(0);
