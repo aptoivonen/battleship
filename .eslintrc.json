@@ -1,0 +1,34 @@
+{
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended"
+  ],
+  "plugins": ["prettier", "jest"],
+  "parserOptions": {
+    "ecmaVersion": 2021
+  },
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "no-console": "off",
+    "class-methods-use-this": "off",
+    "import/no-extraneous-dependencies": "off",
+    "no-new": "off",
+    "no-underscore-dangle": "off",
+    "import/prefer-default-export": "off"
+  },
+  "env": {
+    "browser": true,
+    "jest/globals": true
+  }
+}
