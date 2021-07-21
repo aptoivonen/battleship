@@ -2,7 +2,7 @@
   "name": "battleship",
   "version": "1.0.0",
   "description": "",
-  "main": "",
+  "main": "index.js",
   "private": true,
   "scripts": {
     "start": "webpack serve",
