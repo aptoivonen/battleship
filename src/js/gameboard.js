@@ -8,16 +8,20 @@ function findHit([x, y], gameBoard) {
   return gameBoard.hits.find(([hitX, hitY]) => hitX === x && hitY === y);
 }
 
-function findShip([x, y], gameBoard) {
-  const shipLocation = gameBoard.shipLocations.find((shipLoc) => {
+function findShipAndIndex([x, y], gameBoard) {
+  for (const shipLoc of gameBoard.shipLocations) {
     for (let i = 0; i < shipLoc.ship.length; i++) {
       const [shipX, shipY] = shipLoc.shipMappingFunction(i);
       if (shipX === x && shipY === y) {
-        return true;
+        return { ship: shipLoc.ship, index: i };
       }
     }
-    return false;
-  });
+  }
+  return null;
+}
+
+function findShip([x, y], gameBoard) {
+  const shipLocation = findShipAndIndex([x, y], gameBoard);
   if (shipLocation) {
     return shipLocation.ship;
   }
@@ -74,10 +78,19 @@ class GameBoard {
       return this;
     }
     const newHits = [...this.hits, [x, y]];
+    // default new status
+    let newStatus = "running";
+    const shipAndIndex = findShipAndIndex([x, y], this);
+    if (shipAndIndex) {
+      shipAndIndex.ship.hit(shipAndIndex.index);
+    }
+    if (this.shipLocations.every((shipLoc) => shipLoc.ship.isSunk())) {
+      newStatus = "lost";
+    }
     return new GameBoard(
       this.width,
       this.height,
-      "running",
+      newStatus,
       this.shipLocations,
       newHits
     );
@@ -109,6 +122,13 @@ class GameBoard {
       }
     }
     return result;
+  }
+
+  /* 
+    Statuses: 'initial', 'running', and 'lost'
+  */
+  getStatus() {
+    return this.status;
   }
 }
 

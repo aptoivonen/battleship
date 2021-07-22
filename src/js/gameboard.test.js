@@ -2,6 +2,12 @@ import { expect } from "@jest/globals";
 import GameBoard from "./gameboard";
 import Ship from "./ship";
 
+// A globally needed helper
+function horizontalShipMapFn(shipIndex) {
+  const [x, y] = this.location;
+  return [x + shipIndex, y];
+}
+
 test("board is of correct size", () => {
   const board = new GameBoard(5, 7);
   expect(board.width).toBe(5);
@@ -85,11 +91,6 @@ describe("getBoard and receiveAttack work correctly together", () => {
 });
 
 describe("add method works properly", () => {
-  function horizontalShipMapFn(shipIndex) {
-    const [x, y] = this.location;
-    return [x + shipIndex, y];
-  }
-
   test("returns a GameBoard object", () => {
     const board = new GameBoard(10, 10).add({
       ship: new Ship(1),
@@ -188,5 +189,95 @@ describe("add method works properly", () => {
         shipMappingFunction: horizontalShipMapFn,
       });
     }).toThrow("ship dimensions out of bounds");
+  });
+});
+
+describe("add, receiveAttack, and getBoard work correctly together", () => {
+  test("adding a ship, then attack it twice and miss once", () => {
+    const board1 = new GameBoard(10, 10).add({
+      ship: new Ship(3),
+      location: [0, 0],
+      shipMappingFunction: horizontalShipMapFn,
+    });
+    const board2 = board1.receiveAttack([0, 0]);
+    const board3 = board2.receiveAttack([1, 0]);
+    const board4 = board3.receiveAttack([0, 1]);
+    const boardArray = board4.getBoard().split("");
+    expect(boardArray[0]).toBe("X");
+    expect(boardArray[1]).toBe("X");
+    expect(boardArray[2]).toBe("s");
+    expect(boardArray[10]).toBe("x");
+    const hitsOnlyArray = boardArray.filter((char) => char === "X");
+    expect(hitsOnlyArray).toHaveLength(2);
+    const shipsOnlyArray = boardArray.filter((char) => char === "s");
+    expect(shipsOnlyArray).toHaveLength(1);
+    const missesOnlyArray = boardArray.filter((char) => char === "x");
+    expect(missesOnlyArray).toHaveLength(1);
+    const emptiesOnlyArray = boardArray.filter((char) => char === ".");
+    expect(emptiesOnlyArray).toHaveLength(10 * 10 - 4);
+  });
+});
+
+describe("getStatus works correctly", () => {
+  test("a new empty board has status 'initial'", () => {
+    const board = new GameBoard(5, 7);
+    expect(board.getStatus()).toBe("initial");
+  });
+
+  test("a new board with multiple ships has status 'initial'", () => {
+    const board = new GameBoard(10, 10)
+      .add({
+        ship: new Ship(1),
+        location: [0, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .add({
+        ship: new Ship(2),
+        location: [5, 1],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .add({
+        ship: new Ship(3),
+        location: [7, 2],
+        shipMappingFunction: horizontalShipMapFn,
+      });
+    expect(board.getStatus()).toBe("initial");
+  });
+
+  test("a board has status 'running' after one call to receiveAttack", () => {
+    const board = new GameBoard(10, 10)
+      .add({
+        ship: new Ship(2),
+        location: [0, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .receiveAttack([0, 0]);
+    expect(board.getStatus()).toBe("running");
+  });
+
+  test("a board with multiple ships all sunk has status 'lost'", () => {
+    const board = new GameBoard(10, 10)
+      .add({
+        ship: new Ship(1),
+        location: [0, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .add({
+        ship: new Ship(2),
+        location: [5, 1],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .add({
+        ship: new Ship(3),
+        location: [7, 2],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .receiveAttack([0, 0])
+      .receiveAttack([5, 1])
+      .receiveAttack([6, 1])
+      .receiveAttack([7, 2])
+      .receiveAttack([8, 2])
+      .receiveAttack([9, 2]);
+    expect(board.getStatus()).toBe("lost");
   });
 });
