@@ -1,5 +1,6 @@
 import { expect } from "@jest/globals";
 import GameBoard from "./gameboard";
+import Ship from "./ship";
 
 test("board is of correct size", () => {
   const board = new GameBoard(5, 7);
@@ -80,5 +81,112 @@ describe("getBoard and receiveAttack work correctly together", () => {
     expect(filteredCharacterArray).toHaveLength(10 * 10 - 1);
     const missesOnlyArray = boardArray.filter((char) => char === "x");
     expect(missesOnlyArray).toHaveLength(1);
+  });
+});
+
+describe("add method works properly", () => {
+  function horizontalShipMapFn(shipIndex) {
+    const [x, y] = this.location;
+    return [x + shipIndex, y];
+  }
+
+  test("returns a GameBoard object", () => {
+    const board = new GameBoard(10, 10).add({
+      ship: new Ship(1),
+      location: [0, 0],
+      shipMappingFunction: horizontalShipMapFn,
+    });
+    expect(board).toEqual(expect.any(GameBoard));
+  });
+
+  test("throws TypeError if ship was of wrong type or missing", () => {
+    expect(() => {
+      new GameBoard(10, 10).add({
+        location: [0, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      });
+    }).toThrow(TypeError);
+    expect(() => {
+      new GameBoard(10, 10).add({
+        location: [0, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      });
+    }).toThrow("ship is missing or is not instance of Ship");
+  });
+
+  test("throws TypeError if shipMappingFunction was of wrong type or missing", () => {
+    expect(() => {
+      new GameBoard(10, 10).add({
+        ship: new Ship(1),
+        location: [0, 0],
+      });
+    }).toThrow(TypeError);
+    expect(() => {
+      new GameBoard(10, 10).add({
+        ship: new Ship(1),
+        location: [0, 0],
+      });
+    }).toThrow("shipMappingFunction is missing or is not a function");
+  });
+
+  test("adding one ship within bounds", () => {
+    const board = new GameBoard(10, 10).add({
+      ship: new Ship(1),
+      location: [0, 0],
+      shipMappingFunction: horizontalShipMapFn,
+    });
+    const boardArray = board.getBoard().split("");
+    expect(boardArray[0]).toBe("s");
+    const shipsOnlyArray = boardArray.filter((char) => char === "s");
+    expect(shipsOnlyArray).toHaveLength(1);
+    const emptiesOnlyArray = boardArray.filter((char) => char === ".");
+    expect(emptiesOnlyArray).toHaveLength(10 * 10 - 1);
+  });
+
+  test("adding multiple ships within bounds", () => {
+    const board = new GameBoard(10, 10)
+      .add({
+        ship: new Ship(1),
+        location: [0, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .add({
+        ship: new Ship(2),
+        location: [5, 1],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .add({
+        ship: new Ship(3),
+        location: [7, 2],
+        shipMappingFunction: horizontalShipMapFn,
+      });
+    const boardArray = board.getBoard().split("");
+    expect(boardArray[0]).toBe("s");
+    expect(boardArray[15]).toBe("s");
+    expect(boardArray[16]).toBe("s");
+    expect(boardArray[27]).toBe("s");
+    expect(boardArray[28]).toBe("s");
+    expect(boardArray[29]).toBe("s");
+    const shipsOnlyArray = boardArray.filter((char) => char === "s");
+    expect(shipsOnlyArray).toHaveLength(6);
+    const emptiesOnlyArray = boardArray.filter((char) => char === ".");
+    expect(emptiesOnlyArray).toHaveLength(10 * 10 - 6);
+  });
+
+  test("adding one ship out-of-bounds", () => {
+    expect(() => {
+      new GameBoard(10, 10).add({
+        ship: new Ship(3),
+        location: [9, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      });
+    }).toThrow(RangeError);
+    expect(() => {
+      new GameBoard(10, 10).add({
+        ship: new Ship(3),
+        location: [9, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      });
+    }).toThrow("ship dimensions out of bounds");
   });
 });
