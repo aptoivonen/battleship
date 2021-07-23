@@ -28,16 +28,6 @@ function findShip([x, y], gameBoard) {
   return null;
 }
 
-function isShipLocationWithinBounds(shipLocation, gameBoard) {
-  for (let i = 0; i < shipLocation.ship.length; i++) {
-    const [x, y] = shipLocation.shipMappingFunction(i);
-    if (!isWithinBounds([x, y], gameBoard)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 class GameBoard {
   constructor(
     width,
@@ -66,7 +56,7 @@ class GameBoard {
     if (this.detectCollision(newShipLocation)) {
       throw new RangeError("added ship collided with another ship");
     }
-    if (!isShipLocationWithinBounds(newShipLocation, this)) {
+    if (!this.isShipLocationWithinBounds(newShipLocation)) {
       throw new RangeError("ship dimensions out of bounds");
     }
     this.shipLocations.push(newShipLocation);
@@ -142,6 +132,16 @@ class GameBoard {
       }
     }
     return false;
+  }
+
+  isShipLocationWithinBounds(shipLocation) {
+    for (let i = 0; i < shipLocation.ship.length; i++) {
+      const [x, y] = shipLocation.shipMappingFunction(i);
+      if (!isWithinBounds([x, y], this)) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
