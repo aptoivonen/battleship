@@ -190,6 +190,35 @@ describe("add method works properly", () => {
       });
     }).toThrow("ship dimensions out of bounds");
   });
+
+  test("two ships colliding throws RangeError", () => {
+    expect(() => {
+      new GameBoard(10, 10)
+        .add({
+          ship: new Ship(3),
+          location: [0, 0],
+          shipMappingFunction: horizontalShipMapFn,
+        })
+        .add({
+          ship: new Ship(2),
+          location: [2, 0],
+          shipMappingFunction: horizontalShipMapFn,
+        });
+    }).toThrow(RangeError);
+    expect(() => {
+      new GameBoard(10, 10)
+        .add({
+          ship: new Ship(3),
+          location: [0, 0],
+          shipMappingFunction: horizontalShipMapFn,
+        })
+        .add({
+          ship: new Ship(2),
+          location: [2, 0],
+          shipMappingFunction: horizontalShipMapFn,
+        });
+    }).toThrow("added ship collided with another ship");
+  });
 });
 
 describe("add, receiveAttack, and getBoard work correctly together", () => {

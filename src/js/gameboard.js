@@ -38,6 +38,16 @@ function isShipLocationWithinBounds(shipLocation, gameBoard) {
   return true;
 }
 
+function detectCollision(shipLocation, gameBoard) {
+  for (let i = 0; i < shipLocation.ship.length; i++) {
+    const [x, y] = shipLocation.shipMappingFunction(i);
+    if (findShip([x, y], gameBoard)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 class GameBoard {
   constructor(
     width,
@@ -63,6 +73,9 @@ class GameBoard {
       );
     }
     const newShipLocation = { ship, location, shipMappingFunction };
+    if (detectCollision(newShipLocation, this)) {
+      throw new RangeError("added ship collided with another ship");
+    }
     if (!isShipLocationWithinBounds(newShipLocation, this)) {
       throw new RangeError("ship dimensions out of bounds");
     }
