@@ -1,5 +1,4 @@
-import { expect } from "@jest/globals";
-import shipFactory from "./shipFactory";
+import shipFactory from "./shipfactory";
 import Ship from "./ship";
 
 test("all ship types return a ship", () => {
