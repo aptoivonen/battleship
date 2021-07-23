@@ -1,4 +1,3 @@
-import { expect } from "@jest/globals";
 import GameBoard from "./gameboard";
 import Ship from "./ship";
 
