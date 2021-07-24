@@ -131,11 +131,7 @@ class GameBoard {
   }
 
   #findShip([x, y]) {
-    const shipLocation = this.#findShipAndIndex([x, y]);
-    if (shipLocation) {
-      return shipLocation.ship;
-    }
-    return null;
+    return this.#findShipAndIndex([x, y])?.ship;
   }
 
   #findShipAndIndex([x, y]) {
