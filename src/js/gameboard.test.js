@@ -99,19 +99,22 @@ describe("add method works properly", () => {
     expect(board).toEqual(expect.any(GameBoard));
   });
 
-  test("throws TypeError if ship was of wrong type or missing", () => {
+  test("throws TypeError if ship was missing", () => {
     expect(() => {
       new GameBoard(10, 10).add({
         location: [0, 0],
         shipMappingFunction: horizontalShipMapFn,
       });
-    }).toThrow(TypeError);
+    }).toThrow(new TypeError("ship is missing"));
+  });
+
+  test("throws TypeError if location was missing", () => {
     expect(() => {
       new GameBoard(10, 10).add({
-        location: [0, 0],
+        ship: new Ship(1),
         shipMappingFunction: horizontalShipMapFn,
       });
-    }).toThrow("ship is missing or is not instance of Ship");
+    }).toThrow(new TypeError("location is missing"));
   });
 
   test("throws TypeError if shipMappingFunction was of wrong type or missing", () => {
@@ -309,3 +312,5 @@ describe("getStatus works correctly", () => {
     expect(board.getStatus()).toBe("lost");
   });
 });
+
+// TODO: Test detectCollision and isShipLocationWithinBounds

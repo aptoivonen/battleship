@@ -1,5 +1,3 @@
-import Ship from "./ship";
-
 class GameBoard {
   #width;
   #height;
@@ -30,8 +28,11 @@ class GameBoard {
   }
 
   add({ ship, location, shipMappingFunction }) {
-    if (!ship || !(ship instanceof Ship)) {
-      throw new TypeError("ship is missing or is not instance of Ship");
+    if (!ship) {
+      throw new TypeError("ship is missing");
+    }
+    if (!location) {
+      throw new TypeError("location is missing");
     }
     if (!shipMappingFunction || typeof shipMappingFunction !== "function") {
       throw new TypeError(
@@ -39,10 +40,10 @@ class GameBoard {
       );
     }
     const newShipLocation = { ship, location, shipMappingFunction };
-    if (this.detectCollision(newShipLocation)) {
+    if (this.#detectCollision(newShipLocation)) {
       throw new RangeError("added ship collided with another ship");
     }
-    if (!this.isShipLocationWithinBounds(newShipLocation)) {
+    if (!this.#isShipLocationWithinBounds(newShipLocation)) {
       throw new RangeError("ship dimensions out of bounds");
     }
     this.#shipLocations.push(newShipLocation);
@@ -110,7 +111,7 @@ class GameBoard {
     return this.#status;
   }
 
-  detectCollision(shipLocation) {
+  #detectCollision(shipLocation) {
     for (let i = 0; i < shipLocation.ship.length; i++) {
       const [x, y] = shipLocation.shipMappingFunction(i);
       if (this.#findShip([x, y])) {
@@ -120,7 +121,7 @@ class GameBoard {
     return false;
   }
 
-  isShipLocationWithinBounds(shipLocation) {
+  #isShipLocationWithinBounds(shipLocation) {
     for (let i = 0; i < shipLocation.ship.length; i++) {
       const [x, y] = shipLocation.shipMappingFunction(i);
       if (!this.#isWithinBounds([x, y])) {
