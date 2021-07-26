@@ -40,7 +40,6 @@ function getRandomSquare(gameBoard, random) {
   const y = Math.floor(random() * gameBoard.height);
   return [x, y];
 }
-
 class GameBoardFactory {
   constructor(shipFactory, randomizeFn) {
     if (arguments.length < 2) {
@@ -65,28 +64,33 @@ class GameBoardFactory {
     let gameBoard = new GameBoardClass(10, 10);
     for (const [shipType, numberOfShips] of Object.entries(shipsToCreate)) {
       for (let n = 0; n < numberOfShips; n++) {
-        const ship = this.shipFactory.create(shipType);
-        let newShipLocation;
-        let continueIteration = true;
-        do {
-          const randomSquare = getRandomSquare(gameBoard, this.random);
-          const randomShipMappingFn = getRandomShipMappingFunction(this.random);
-          newShipLocation = {
-            ship,
-            location: randomSquare,
-            shipMappingFunction: randomShipMappingFn,
-          };
-          try {
-            gameBoard = gameBoard.add(newShipLocation);
-            continueIteration = false;
-            // eslint-disable-next-line no-empty
-          } catch (RangeError) {}
-        } while (continueIteration);
-        // gameBoard = gameBoard.add(newShipLocation);
+        gameBoard = this.#getGameBoardWithNewShipLocation(shipType, gameBoard);
       }
     }
 
     return gameBoard;
+  }
+
+  #getGameBoardWithNewShipLocation(shipType, gameBoard) {
+    const ship = this.shipFactory.create(shipType);
+    let newGameBoard;
+    let newShipLocation;
+    let continueIteration = true;
+    do {
+      const randomSquare = getRandomSquare(gameBoard, this.random);
+      const randomShipMappingFn = getRandomShipMappingFunction(this.random);
+      newShipLocation = {
+        ship,
+        location: randomSquare,
+        shipMappingFunction: randomShipMappingFn,
+      };
+      try {
+        newGameBoard = gameBoard.add(newShipLocation);
+        continueIteration = false;
+        // eslint-disable-next-line no-empty
+      } catch (RangeError) {}
+    } while (continueIteration);
+    return newGameBoard;
   }
 }
 
