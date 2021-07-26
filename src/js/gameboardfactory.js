@@ -67,6 +67,7 @@ class GameBoardFactory {
       for (let n = 0; n < numberOfShips; n++) {
         const ship = this.shipFactory.create(shipType);
         let newShipLocation;
+        let continueIteration = true;
         do {
           const randomSquare = getRandomSquare(gameBoard, this.random);
           const randomShipMappingFn = getRandomShipMappingFunction(this.random);
@@ -75,11 +76,13 @@ class GameBoardFactory {
             location: randomSquare,
             shipMappingFunction: randomShipMappingFn,
           };
-        } while (
-          gameBoard.detectCollision(newShipLocation) ||
-          !gameBoard.isShipLocationWithinBounds(newShipLocation)
-        );
-        gameBoard = gameBoard.add(newShipLocation);
+          try {
+            gameBoard = gameBoard.add(newShipLocation);
+            continueIteration = false;
+            // eslint-disable-next-line no-empty
+          } catch (RangeError) {}
+        } while (continueIteration);
+        // gameBoard = gameBoard.add(newShipLocation);
       }
     }
 
