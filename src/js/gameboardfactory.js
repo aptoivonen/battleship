@@ -30,20 +30,26 @@ const shipsToCreate = {
 };
 Object.setPrototypeOf(shipsToCreate, null);
 
-function getRandomShipMappingFunction() {
-  const randomIndex = Math.floor(2 * Math.random());
+function getRandomShipMappingFunction(random) {
+  const randomIndex = Math.floor(2 * random());
   return shipMappingFunctions[randomIndex];
 }
 
-function getRandomSquare(gameBoard) {
-  const x = Math.floor(Math.random() * gameBoard.width);
-  const y = Math.floor(Math.random() * gameBoard.height);
+function getRandomSquare(gameBoard, random) {
+  const x = Math.floor(random() * gameBoard.width);
+  const y = Math.floor(random() * gameBoard.height);
   return [x, y];
 }
 
 class GameBoardFactory {
-  constructor(shipFactory) {
+  constructor(shipFactory, randomizeFn) {
+    if (arguments.length < 2) {
+      throw new TypeError(
+        "cannot create a gameBoardFactory: too few arguments; 2 are required"
+      );
+    }
     this.shipFactory = shipFactory;
+    this.random = randomizeFn;
   }
 
   create(type) {
@@ -62,8 +68,8 @@ class GameBoardFactory {
         const ship = this.shipFactory.create(shipType);
         let newShipLocation;
         do {
-          const randomSquare = getRandomSquare(gameBoard);
-          const randomShipMappingFn = getRandomShipMappingFunction();
+          const randomSquare = getRandomSquare(gameBoard, this.random);
+          const randomShipMappingFn = getRandomShipMappingFunction(this.random);
           newShipLocation = {
             ship,
             location: randomSquare,
