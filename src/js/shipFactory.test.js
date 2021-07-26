@@ -1,5 +1,8 @@
-import shipFactory from "./shipfactory";
+import ShipFactory from "./shipfactory";
 import Ship from "./ship";
+
+// common shipFactory for all tests
+const shipFactory = new ShipFactory();
 
 test("all ship types return a ship", () => {
   const carrier = shipFactory.create("carrier");

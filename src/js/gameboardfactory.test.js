@@ -1,9 +1,12 @@
 import GameBoardFactory from "./gameboardfactory";
 import GameBoard from "./gameboard";
-import shipFactory from "./shipfactory";
+import ShipFactory from "./shipfactory";
 import shipLookupTable from "./shiplookuptable";
 import numberOfShipsTable from "./numberofshipstable";
 import Ship from "./ship";
+
+// common shipFactory for all tests
+const shipFactory = new ShipFactory();
 
 test("creates gameboard objects for 'player' and 'ai'", () => {
   const playerBoard = new GameBoardFactory(shipFactory).create("player");
