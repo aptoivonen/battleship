@@ -1,4 +1,3 @@
-import { expect } from "@jest/globals";
 import Ship from "./ship";
 
 test("ship has correct length after creation", () => {
