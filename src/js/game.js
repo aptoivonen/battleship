@@ -1,6 +1,6 @@
 import ShipFactory from "./shipfactory";
 import GameBoardFactory from "./gameboardfactory";
-import pubsub from "./pubsub";
+import pubsubInstance from "./pubsub";
 
 class Game {
   #random;
@@ -8,34 +8,54 @@ class Game {
   #aiBoard;
   #pubsub;
 
-  constructor(randomizeFn) {
+  constructor(randomizeFn, playerBoard, aiBoard, pubsub) {
     this.#random = randomizeFn;
     const gameBoardFactory = new GameBoardFactory(
       new ShipFactory(),
       this.#random
     );
-    this.#playerBoard = gameBoardFactory.create("player");
-    this.#aiBoard = gameBoardFactory.create("ai");
-    this.#pubsub = pubsub;
+    this.#playerBoard = playerBoard ?? gameBoardFactory.create("player");
+    this.#aiBoard = aiBoard ?? gameBoardFactory.create("ai");
+    this.#pubsub = pubsub ?? pubsubInstance;
   }
 
   attack([x, y]) {
-    let result = false;
-    try {
-      const newAiBoard = this.#aiBoard.receiveAttack([x, y]);
-      if (newAiBoard !== this.#aiBoard) {
-        result = true;
-        this.#aiBoard = newAiBoard;
-        this.#pubsub.publish("playermove", true);
-      }
-      // eslint-disable-next-line no-empty
-    } catch (RangeError) {}
+    let result = this;
+
+    const newAiBoard = this.#aiBoard.receiveAttack([x, y]);
+    if (newAiBoard !== this.#aiBoard) {
+      result = new Game(
+        this.#random,
+        this.#playerBoard,
+        newAiBoard,
+        this.#pubsub
+      );
+      this.#pubsub.publish("playermove", result);
+    }
 
     return result;
   }
 
   getBoards() {
     return [this.#playerBoard.getBoard(), this.#aiBoard.getBoard()];
+  }
+
+  getStatus() {
+    let result;
+    if (this.#playerBoard.getStatus() === "lost") {
+      result = "lost";
+    } else if (this.#aiBoard.getStatus() === "lost") {
+      result = "won";
+    } else if (
+      this.#playerBoard.getStatus() === "initial" &&
+      this.#aiBoard.getStatus() === "initial"
+    ) {
+      result = "initial";
+    } else {
+      result = "running";
+    }
+
+    return result;
   }
 
   subscribe(topic, fn) {
