@@ -16,7 +16,9 @@ const pubsub = {
   },
 
   publish(topic, event) {
-    topics[topic].forEach((fn) => fn(event));
+    if (topic in topics) {
+      topics[topic].forEach((fn) => fn(event));
+    }
   },
 };
 
