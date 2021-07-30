@@ -54,7 +54,7 @@ class GameBoard {
     if (!this.#isWithinBounds([x, y])) {
       throw new RangeError("board coordinates out of bound");
     }
-    if (this.#findHit([x, y])) {
+    if (this.#findHit([x, y]) || this.#status === "lost") {
       return this;
     }
     const newHits = [...this.#hits, [x, y]];
@@ -64,7 +64,10 @@ class GameBoard {
     if (shipAndIndex) {
       shipAndIndex.ship.hit(shipAndIndex.index);
     }
-    if (this.#shipLocations.every((shipLoc) => shipLoc.ship.isSunk())) {
+    if (
+      this.#shipLocations.length > 0 &&
+      this.#shipLocations.every((shipLoc) => shipLoc.ship.isSunk())
+    ) {
       newStatus = "lost";
     }
     return new GameBoard(

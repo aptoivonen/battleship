@@ -311,6 +311,20 @@ describe("getStatus works correctly", () => {
       .receiveAttack([9, 2]);
     expect(board.getStatus()).toBe("lost");
   });
-});
 
-// TODO: Test detectCollision and isShipLocationWithinBounds
+  test("a board with status 'lost' returns itself after another attack", () => {
+    const board = new GameBoard(10, 10)
+      .add({
+        ship: new Ship(2),
+        location: [0, 0],
+        shipMappingFunction: horizontalShipMapFn,
+      })
+      .receiveAttack([0, 0])
+      .receiveAttack([1, 0]);
+    expect(board.getStatus()).toBe("lost");
+    const board1 = board.receiveAttack([2, 0]);
+    expect(board1).toBe(board);
+    const board2 = board1.receiveAttack([2, 0]);
+    expect(board2).toBe(board);
+  });
+});
