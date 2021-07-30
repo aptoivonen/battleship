@@ -1,6 +1,6 @@
-const positionFromIndex = (i, board) => [
-  i % board.width,
-  Math.floor(i / board.width),
+const positionFromIndex = (i, boardWidth) => [
+  i % boardWidth,
+  Math.floor(i / boardWidth),
 ];
 
 export { positionFromIndex };
