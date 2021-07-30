@@ -31,6 +31,10 @@ class Game {
   attack([x, y]) {
     let result = this;
 
+    if (/won|lost/.test(this.getStatus())) {
+      return result;
+    }
+
     const newAiBoard = this.#aiBoard.receiveAttack([x, y]);
     if (newAiBoard !== this.#aiBoard) {
       const playerResult = new Game(
