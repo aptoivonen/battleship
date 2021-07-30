@@ -1,5 +1,6 @@
 import Game from "./game";
 import { makeRandomMock } from "./testutils";
+import { positionFromIndex } from "./utils";
 
 describe("attack method", () => {
   test("attacking outside the board throws RangeError", () => {
@@ -59,7 +60,38 @@ describe("attack and subscribe", () => {
     expect(mockFn.mock.calls).toHaveLength(1);
   });
 
-  // TODO: attack => 'aimove'
+  test("attacking outside the board doesn't cause a 'aimove' event to be emitted", () => {
+    // board is 10 x 10
+    const game = new Game(makeRandomMock());
+    const mockFn = jest.fn();
+    game.subscribe("aimove", mockFn);
+    try {
+      game.attack([11, 12]);
+      // eslint-disable-next-line no-empty
+    } catch {}
+    expect(mockFn.mock.calls).toHaveLength(0);
+  });
+
+  test("attacking a fresh spot causes a 'aimove' event to be emitted", () => {
+    const game = new Game(makeRandomMock());
+    const mockFn = jest.fn();
+    game.subscribe("aimove", mockFn);
+    game.attack([1, 2]);
+    expect(mockFn.mock.calls).toHaveLength(1);
+    // first argument is the game object
+    expect(mockFn.mock.calls[0][0]).toEqual(expect.any(Game));
+  });
+
+  test("attacking a spot twice inside the board doesn't cause two 'aimove' events to be emitted", () => {
+    // board is 10 x 10
+    const game1 = new Game(makeRandomMock());
+    const mockFn = jest.fn();
+    game1.subscribe("aimove", mockFn);
+    const game2 = game1.attack([1, 2]);
+    expect(mockFn.mock.calls).toHaveLength(1);
+    game2.attack([1, 2]);
+    expect(mockFn.mock.calls).toHaveLength(1);
+  });
 });
 
 describe("getBoards", () => {
@@ -85,7 +117,13 @@ describe("getBoards", () => {
     expect(result1).not.toBe(result2);
   });
 
-  // TODO: player board changed after fresh attack
+  test("player board is changed after fresh attack", () => {
+    const game1 = new Game(makeRandomMock());
+    const result1 = game1.getBoards()[0];
+    const game2 = game1.attack([1, 2]);
+    const result2 = game2.getBoards()[0];
+    expect(result1).not.toBe(result2);
+  });
 });
 
 describe("getStatus", () => {
@@ -98,5 +136,13 @@ describe("getStatus", () => {
     const game = new Game(makeRandomMock()).attack([1, 2]);
     const result = game.getStatus();
     expect(result).toBe("running");
+  });
+
+  test("returns 'won' or 'lost' after all ai board spots are hit", () => {
+    let game = new Game(makeRandomMock());
+    for (let i = 0; i < game.width * game.height; i++) {
+      game = game.attack(positionFromIndex(i, game.width));
+    }
+    expect(game.getStatus()).toEqual(expect.stringMatching(/won|lost/));
   });
 });

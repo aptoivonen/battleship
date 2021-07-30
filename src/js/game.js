@@ -1,6 +1,7 @@
 import ShipFactory from "./shipfactory";
 import GameBoardFactory from "./gameboardfactory";
 import pubsubInstance from "./pubsub";
+import perfomAiMove from "./ai";
 
 class Game {
   #random;
@@ -19,18 +20,31 @@ class Game {
     this.#pubsub = pubsub ?? pubsubInstance;
   }
 
+  get width() {
+    return this.#playerBoard.width;
+  }
+
+  get height() {
+    return this.#playerBoard.height;
+  }
+
   attack([x, y]) {
     let result = this;
 
     const newAiBoard = this.#aiBoard.receiveAttack([x, y]);
     if (newAiBoard !== this.#aiBoard) {
-      result = new Game(
+      const playerResult = new Game(
         this.#random,
         this.#playerBoard,
         newAiBoard,
         this.#pubsub
       );
-      this.#pubsub.publish("playermove", result);
+      this.#pubsub.publish("playermove", playerResult);
+      const newPlayerBoard = perfomAiMove(this.#playerBoard, this.#random);
+      result = new Game(this.#random, newPlayerBoard, newAiBoard, this.#pubsub);
+      if (newPlayerBoard !== this.#playerBoard) {
+        this.#pubsub.publish("aimove", result);
+      }
     }
 
     return result;
