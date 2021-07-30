@@ -1,7 +1,4 @@
-const positionFromIndex = (i, playerBoard) => [
-  i % playerBoard.width,
-  Math.floor(i / playerBoard.width),
-];
+import { positionFromIndex } from "./utils";
 
 function perfomAiMove(playerBoard, randomizeFn) {
   const possiblePositions = playerBoard
