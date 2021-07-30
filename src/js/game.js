@@ -34,6 +34,10 @@ class Game {
     return result;
   }
 
+  getBoards() {
+    return [this.#playerBoard.getBoard(), this.#aiBoard.getBoard()];
+  }
+
   subscribe(topic, fn) {
     this.#pubsub.subscribe(topic, fn);
   }

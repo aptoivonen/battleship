@@ -51,4 +51,32 @@ describe("attack and subscribe", () => {
     game.attack([1, 2]);
     expect(mockFn.mock.calls).toHaveLength(1);
   });
+
+  // TODO: attack => 'aimove'
+});
+
+describe("getBoards", () => {
+  test("returns two initialized board strings", () => {
+    const result = new Game(makeRandomMock()).getBoards();
+    expect(result).toHaveLength(2);
+    const onlyInitialChars = (chr) => /[.s]/.test(chr);
+    const numberOfPlayerBoardInitialChars = result[0]
+      .split("")
+      .filter(onlyInitialChars);
+    const numberOfAiBoardInitialChars = result[1]
+      .split("")
+      .filter(onlyInitialChars);
+    expect(numberOfPlayerBoardInitialChars).toHaveLength(10 * 10);
+    expect(numberOfAiBoardInitialChars).toHaveLength(10 * 10);
+  });
+
+  test("ai board is changed after fresh attack", () => {
+    const game = new Game(makeRandomMock());
+    const result1 = game.getBoards()[1];
+    game.attack([1, 2]);
+    const result2 = game.getBoards()[1];
+    expect(result1).not.toBe(result2);
+  });
+
+  // TODO: player board changed after fresh attack
 });
