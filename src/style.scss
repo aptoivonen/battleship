@@ -1,0 +1,32 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 5rem;
+  background: lightblue;
+}
+
+.main-title {
+  margin: 0;
+  font-size: 4rem;
+  letter-spacing: 0.7ch;
+}
