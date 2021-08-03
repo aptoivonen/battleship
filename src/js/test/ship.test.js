@@ -19,13 +19,13 @@ describe("constructor", () => {
     }).not.toThrow(RangeError);
   });
 
-  test("create a ship with no positions", () => {
+  test("ship with no positions throws TypeError", () => {
     expect(() => {
       new Ship([]);
     }).toThrow(new TypeError("must give a valid ship positions array"));
   });
 
-  test("create a ship with positions not in a line", () => {
+  test("ship with positions not in a line throws RangeError", () => {
     expect(() => {
       new Ship([
         [0, 0],
