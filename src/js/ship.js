@@ -1,4 +1,4 @@
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
 
 function validateConnectedPositions(shipPositions) {
   function isNorthFacing(positions) {
@@ -81,15 +81,15 @@ class Ship {
   }
 
   isSunk() {
-    return _.isEqual(this.#positions.sort(), this.#hits.sort());
+    return isEqual(this.#positions.sort(), this.#hits.sort());
   }
 
   #isPosition([x, y]) {
-    return !!this.#positions.find((position) => _.isEqual(position, [x, y]));
+    return !!this.#positions.find((position) => isEqual(position, [x, y]));
   }
 
   #isExistingHit([x, y]) {
-    return !!this.#hits.find((hit) => _.isEqual(hit, [x, y]));
+    return !!this.#hits.find((hit) => isEqual(hit, [x, y]));
   }
 
   #validateHit([x, y]) {
