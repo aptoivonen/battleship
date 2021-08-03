@@ -1,60 +1,94 @@
 import Ship from "./ship";
 
-test("ship has correct length after creation", () => {
-  const result = new Ship(5);
-  expect(result).toHaveLength(5);
+let ship;
+
+beforeEach(() => {
+  ship = new Ship([
+    [0, 0],
+    [0, 1],
+    [0, 2],
+  ]);
 });
 
-test("ship does not start the game sunk", () => {
-  const result = new Ship(5).isSunk();
-  expect(result).toEqual(expect.any(Boolean));
-  expect(result).toBe(false);
+describe("constructor", () => {
+  test("create a ship with legal positions", () => {
+    expect(() => {
+      new Ship([
+        [0, 0],
+        [1, 0],
+      ]);
+    }).not.toThrow(RangeError);
+  });
+
+  test("create a ship with no positions", () => {
+    expect(() => {
+      new Ship([]);
+    }).toThrow(new TypeError("must give a valid ship positions array"));
+  });
+
+  test("create a ship with positions not in a line", () => {
+    expect(() => {
+      new Ship([
+        [0, 0],
+        [1, 1],
+      ]);
+    }).toThrow(
+      new RangeError("ship position coordinated must form a sound line")
+    );
+  });
 });
 
-test("ship has original length after out of bounds hit", () => {
-  const ship = new Ship(3);
-  const result1 = ship.length;
-  expect(result1).toBe(3);
-  ship.hit(7);
-  const result2 = ship.length;
-  expect(result2).toBe(3);
+describe("hit", () => {
+  test("a correct hit does not throw Error", () => {
+    expect(() => {
+      ship.hit([0, 0]);
+    }).not.toThrow();
+  });
+
+  test("an outside hit throws RangeError", () => {
+    expect(() => {
+      ship.hit([1, 1]);
+    }).toThrow(new RangeError("hit coordinates outside of ship"));
+  });
 });
 
-test("ship is sunk after correct hits", () => {
-  const ship = new Ship(3);
-  ship.hit(0);
-  ship.hit(1);
-  ship.hit(2);
-  const result = ship.isSunk();
-  expect(result).toEqual(expect.any(Boolean));
-  expect(result).toBe(true);
+describe("getHits", () => {
+  test("a hit is registered properly", () => {
+    ship.hit([0, 0]);
+    expect(ship.getHits()).toEqual([[0, 0]]);
+  });
 });
 
-test("ship is not sunk after too few hits", () => {
-  const ship = new Ship(3);
-  ship.hit(0);
-  ship.hit(1);
-  const result = ship.isSunk();
-  expect(result).toEqual(expect.any(Boolean));
-  expect(result).toBe(false);
-});
+describe("isSunk", () => {
+  test("ship does not start the game sunk", () => {
+    const result = ship.isSunk();
+    expect(result).toEqual(expect.any(Boolean));
+    expect(result).toBe(false);
+  });
 
-test("ship is not sunk after hits in the same place", () => {
-  const ship = new Ship(3);
-  ship.hit(0);
-  ship.hit(0);
-  ship.hit(0);
-  const result = ship.isSunk();
-  expect(result).toEqual(expect.any(Boolean));
-  expect(result).toBe(false);
-});
+  test("ship is sunk after correct hits", () => {
+    ship.hit([0, 0]);
+    ship.hit([0, 1]);
+    ship.hit([0, 2]);
+    const result = ship.isSunk();
+    expect(result).toEqual(expect.any(Boolean));
+    expect(result).toBe(true);
+  });
 
-test("ship is not sunk after a hit outside its length", () => {
-  const ship = new Ship(3);
-  ship.hit(0);
-  ship.hit(1);
-  ship.hit(3);
-  const result = ship.isSunk();
-  expect(result).toEqual(expect.any(Boolean));
-  expect(result).toBe(false);
+  test("ship is not sunk after too few hits", () => {
+    ship.hit([0, 0]);
+    ship.hit([0, 1]);
+    const result = ship.isSunk();
+    expect(result).toEqual(expect.any(Boolean));
+    expect(result).toBe(false);
+  });
+
+  test("ship is not sunk after hits in the same place", () => {
+    ship.hit([0, 0]);
+    ship.hit([0, 0]);
+    ship.hit([0, 0]);
+    const result = ship.isSunk();
+    expect(result).toEqual(expect.any(Boolean));
+    expect(result).toBe(false);
+  });
 });
