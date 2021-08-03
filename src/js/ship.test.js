@@ -1,7 +1,6 @@
 import Ship from "./ship";
 
 let ship;
-
 beforeEach(() => {
   ship = new Ship([
     [0, 0],
