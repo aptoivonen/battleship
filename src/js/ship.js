@@ -71,7 +71,9 @@ class Ship {
 
   hit([x, y]) {
     this.#validateHit([x, y]);
-    this.#hits.push([x, y]);
+    if (!this.#isExistingHit([x, y])) {
+      this.#hits.push([x, y]);
+    }
   }
 
   getHits() {
@@ -82,11 +84,16 @@ class Ship {
     return _.isEqual(new Set(this.#positions), new Set(this.#hits));
   }
 
+  #isPosition([x, y]) {
+    return !!this.#positions.find((position) => _.isEqual(position, [x, y]));
+  }
+
+  #isExistingHit([x, y]) {
+    return !!this.#hits.find((hit) => _.isEqual(hit, [x, y]));
+  }
+
   #validateHit([x, y]) {
-    const foundPosition = this.#positions.find(
-      ([posX, posY]) => posX === x && posY === y
-    );
-    if (!foundPosition) {
+    if (!this.#isPosition([x, y])) {
       throw new RangeError("hit coordinates outside of ship");
     }
   }

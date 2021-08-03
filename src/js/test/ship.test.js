@@ -56,6 +56,13 @@ describe("getHits", () => {
     ship.hit([0, 0]);
     expect(ship.getHits()).toEqual([[0, 0]]);
   });
+
+  test("hits in the same place are not registered", () => {
+    ship.hit([0, 0]);
+    ship.hit([0, 0]);
+    ship.hit([0, 0]);
+    expect(ship.getHits()).toEqual([[0, 0]]);
+  });
 });
 
 describe("isSunk", () => {
