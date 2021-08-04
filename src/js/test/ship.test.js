@@ -51,17 +51,23 @@ describe("hit", () => {
   });
 });
 
-describe("getHits", () => {
+describe("hits getter", () => {
   test("a hit is registered properly", () => {
     ship.hit([0, 0]);
-    expect(ship.getHits()).toEqual([[0, 0]]);
+    expect(ship.hits).toEqual([[0, 0]]);
   });
 
   test("hits in the same place are not registered", () => {
     ship.hit([0, 0]);
     ship.hit([0, 0]);
     ship.hit([0, 0]);
-    expect(ship.getHits()).toEqual([[0, 0]]);
+    expect(ship.hits).toEqual([[0, 0]]);
+  });
+});
+
+describe("positions getter", () => {
+  test("ship has correct number of positions", () => {
+    expect(ship.positions).toHaveLength(3);
   });
 });
 

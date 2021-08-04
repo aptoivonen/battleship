@@ -76,7 +76,11 @@ class Ship {
     }
   }
 
-  getHits() {
+  get positions() {
+    return this.#positions;
+  }
+
+  get hits() {
     return this.#hits;
   }
 
