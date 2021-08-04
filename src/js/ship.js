@@ -88,7 +88,7 @@ class Ship {
     return isEqual(this.#positions.sort(), this.#hits.sort());
   }
 
-  #isPosition([x, y]) {
+  hasPosition([x, y]) {
     return !!this.#positions.find((position) => isEqual(position, [x, y]));
   }
 
@@ -97,7 +97,7 @@ class Ship {
   }
 
   #validateHit([x, y]) {
-    if (!this.#isPosition([x, y])) {
+    if (!this.hasPosition([x, y])) {
       throw new RangeError("hit coordinates outside of ship");
     }
   }

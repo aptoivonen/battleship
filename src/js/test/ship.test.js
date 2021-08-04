@@ -71,6 +71,16 @@ describe("positions getter", () => {
   });
 });
 
+describe("hasPosition", () => {
+  test("ship has position", () => {
+    expect(ship.hasPosition([0, 0])).toBe(true);
+  });
+
+  test("ship doesn't have nonexistent position", () => {
+    expect(ship.hasPosition([9, 9])).toBe(false);
+  });
+});
+
 describe("isSunk", () => {
   test("ship does not start the game sunk", () => {
     const result = ship.isSunk();
