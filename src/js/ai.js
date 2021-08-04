@@ -1,15 +1,19 @@
-import { positionFromIndex } from "./utils";
+function getNonHitPositions(board) {
+  const allNonHitPositions = [];
+  for (let row = 0; row < board.height; row++) {
+    for (let column = 0; column < board.width; column++) {
+      const newPosition = [column, row];
+      if (!board.findHit(newPosition)) {
+        allNonHitPositions.push(newPosition);
+      }
+    }
+  }
+  return allNonHitPositions;
+}
 
-function perfomAiMove(playerBoard, randomizeFn) {
-  const possiblePositions = playerBoard
-    .getBoard()
-    .split("")
-    .map((char, i) => ({ char, pos: positionFromIndex(i, playerBoard.width) }))
-    .filter((obj) => /[.s]/.test(obj.char))
-    .map((obj) => obj.pos);
-  const randomIndex = Math.floor(randomizeFn() * possiblePositions.length);
-  const newTarget = possiblePositions[randomIndex];
-  return playerBoard.receiveAttack(newTarget);
+function perfomAiMove(playerBoard, sampleFn) {
+  const targetPosition = sampleFn(getNonHitPositions(playerBoard));
+  return playerBoard.receiveAttack(targetPosition);
 }
 
 export default perfomAiMove;
