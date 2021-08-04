@@ -50,7 +50,7 @@ class GameBoard {
     if (!this.#isWithinBounds([x, y])) {
       throw new RangeError("board coordinates out of bound");
     }
-    if (this.#findHit([x, y]) || this.#status === "lost") {
+    if (this.findHit([x, y]) || this.#status === "lost") {
       return this;
     }
     const newHits = [...this.#hits, [x, y]];
@@ -87,7 +87,7 @@ class GameBoard {
     return null;
   }
 
-  #findHit([x, y]) {
+  findHit([x, y]) {
     return this.#hits.find(([hitX, hitY]) => hitX === x && hitY === y);
   }
 
