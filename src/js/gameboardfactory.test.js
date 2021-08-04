@@ -1,102 +1,106 @@
 import GameBoardFactory from "./gameboardfactory";
 import GameBoard from "./gameboard";
 import ShipFactory from "./shipfactory";
-import shipLookupTable from "./shiplookuptable";
-import numberOfShipsTable from "./numberofshipstable";
-import Ship from "./ship";
-import { makeRandomMock } from "./testutils";
+import { makeRandomMock, makeArraySampleMock } from "./testutils";
 
 // common shipFactory for all tests
 const shipFactory = new ShipFactory();
 
-test("creates gameboard objects for 'player' and 'ai'", () => {
-  const playerBoard = new GameBoardFactory(
-    shipFactory,
-    makeRandomMock()
-  ).create("player");
-  expect(playerBoard).toEqual(expect.any(GameBoard));
+describe("create", () => {
+  test("throws TypeError if arguments to constructor were not supplied", () => {
+    expect(() => {
+      new GameBoardFactory().create("player");
+    }).toThrow(
+      new TypeError(
+        "cannot create a gameBoardFactory: too few arguments; 3 are required"
+      )
+    );
+  });
 
-  const aiBoard = new GameBoardFactory(shipFactory, makeRandomMock()).create(
-    "ai"
-  );
-  expect(aiBoard).toEqual(expect.any(GameBoard));
+  test("creates gameboard objects for 'player' and 'ai'", () => {
+    const playerBoard = new GameBoardFactory(
+      shipFactory,
+      makeRandomMock(),
+      makeArraySampleMock()
+    ).create("player");
+    expect(playerBoard).toEqual(expect.any(GameBoard));
+
+    const aiBoard = new GameBoardFactory(
+      shipFactory,
+      makeRandomMock(),
+      makeArraySampleMock()
+    ).create("ai");
+    expect(aiBoard).toEqual(expect.any(GameBoard));
+  });
+
+  test("throws TypeError if type doesn't exist", () => {
+    expect(() => {
+      new GameBoardFactory(
+        shipFactory,
+        makeRandomMock(),
+        makeArraySampleMock()
+      ).create("nosuchplayer");
+    }).toThrow(new TypeError("no such player type"));
+  });
 });
 
-test("throws TypeError if type doesn't exist", () => {
-  expect(() => {
-    new GameBoardFactory(shipFactory, makeRandomMock()).create("nosuchplayer");
-  }).toThrow(new TypeError("no such player type"));
-});
-
-test("throws TypeError if arguments to constructor were not supplied", () => {
-  expect(() => {
-    new GameBoardFactory().create("player");
-  }).toThrow(
-    new TypeError(
-      "cannot create a gameBoardFactory: too few arguments; 2 are required"
-    )
-  );
-});
-
-describe("creates 1 carrier, 2 battleships, 3 cruisers, 4 destroyers, 5 submarines for player and ai", () => {
+describe("creates 1 carrier, 2 battleships, 3 cruisers, 4 destroyers, 5 submarines", () => {
   const [
     numberOfCarriers,
     numberOfBattleships,
     numberOfCruisers,
     numberOfDestroyers,
     numberOfSubmarines,
-  ] = [
-    numberOfShipsTable["carrier"],
-    numberOfShipsTable["battleship"],
-    numberOfShipsTable["cruiser"],
-    numberOfShipsTable["destroyer"],
-    numberOfShipsTable["submarine"],
-  ];
-  test("correct number of ship spaces", () => {
-    const playerBoard = new GameBoardFactory(
-      shipFactory,
-      makeRandomMock()
-    ).create("player");
-    const aiBoard = new GameBoardFactory(shipFactory, makeRandomMock()).create(
-      "ai"
-    );
-    const playerBoardArray = playerBoard.getBoard().split("");
-    const aiBoardArray = aiBoard.getBoard().split("");
-    const onlyShips = (char) => char === "s";
-    const playerNumberOfShipSpaces = playerBoardArray.filter(onlyShips).length;
-    const aiNumberOfShipSpaces = aiBoardArray.filter(onlyShips).length;
-    const [
-      carrierLength,
-      battleshipLength,
-      cruiserLength,
-      destoyerLength,
-      submarineLength,
-    ] = [
-      shipLookupTable["carrier"],
-      shipLookupTable["battleship"],
-      shipLookupTable["cruiser"],
-      shipLookupTable["destroyer"],
-      shipLookupTable["submarine"],
-    ];
+  ] = [1, 2, 3, 4, 5];
 
-    const expectedNumberOfShipSpaces =
-      numberOfCarriers * carrierLength +
-      numberOfBattleships * battleshipLength +
-      numberOfCruisers * cruiserLength +
-      numberOfDestroyers * destoyerLength +
-      numberOfSubmarines * submarineLength;
-    expect(playerNumberOfShipSpaces).toBe(expectedNumberOfShipSpaces);
-    expect(aiNumberOfShipSpaces).toBe(expectedNumberOfShipSpaces);
+  test("correct number of ships", () => {
+    const board = new GameBoardFactory(
+      shipFactory,
+      makeRandomMock(),
+      makeArraySampleMock()
+    ).create("player");
+
+    expect(board.ships).toHaveLength(
+      numberOfCarriers +
+        numberOfBattleships +
+        numberOfCruisers +
+        numberOfDestroyers +
+        numberOfSubmarines
+    );
   });
 
-  test("calls GameBoard class correct number of times for each ship type", () => {
-    const shipFactoryCreateMock = jest.fn(() => {
-      return new Ship(1);
-    });
+  test("calls ShipFactory.create() correct number of times for each ship type", () => {
+    const shipFactoryCreateMock = jest
+      .fn()
+      .mockReturnValueOnce(shipFactory.create("carrier", [0, 0], "eastwards"))
+      .mockReturnValueOnce(
+        shipFactory.create("battleship", [0, 1], "eastwards")
+      )
+      .mockReturnValueOnce(
+        shipFactory.create("battleship", [4, 1], "eastwards")
+      )
+      .mockReturnValueOnce(shipFactory.create("cruiser", [0, 2], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("cruiser", [3, 2], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("cruiser", [6, 2], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("destroyer", [0, 3], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("destroyer", [2, 3], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("destroyer", [4, 3], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("destroyer", [6, 3], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("submarine", [0, 4], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("submarine", [1, 4], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("submarine", [2, 4], "eastwards"))
+      .mockReturnValueOnce(shipFactory.create("submarine", [3, 4], "eastwards"))
+      .mockReturnValueOnce(
+        shipFactory.create("submarine", [4, 4], "eastwards")
+      );
     const shipFactoryMock = {
       create: shipFactoryCreateMock,
     };
-    new GameBoardFactory(shipFactoryMock, makeRandomMock()).create("player");
+    new GameBoardFactory(
+      shipFactoryMock,
+      makeRandomMock(),
+      makeArraySampleMock()
+    ).create("player");
     const shipTypeCount = shipFactoryCreateMock.mock.calls.reduce(
       (acc, fnCall) => {
         const type = fnCall[0];
