@@ -63,17 +63,18 @@ class Ship {
   #positions;
   #hits;
 
-  constructor(positions) {
+  constructor(positions, hits = []) {
     validateConnectedPositions(positions);
     this.#positions = positions;
-    this.#hits = [];
+    this.#hits = hits;
   }
 
   hit([x, y]) {
     this.#validateHit([x, y]);
     if (!this.#isExistingHit([x, y])) {
-      this.#hits.push([x, y]);
+      return new Ship(this.#positions, [...this.#hits, [x, y]]);
     }
+    return this;
   }
 
   get positions() {

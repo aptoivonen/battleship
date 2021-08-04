@@ -49,19 +49,22 @@ describe("hit", () => {
       ship.hit([1, 1]);
     }).toThrow(new RangeError("hit coordinates outside of ship"));
   });
+
+  test("a correct hit returns a ship object", () => {
+    const newShip = ship.hit([0, 0]);
+    expect(newShip).toEqual(expect.any(Ship));
+  });
 });
 
 describe("hits getter", () => {
   test("a hit is registered properly", () => {
-    ship.hit([0, 0]);
-    expect(ship.hits).toEqual([[0, 0]]);
+    const newShip = ship.hit([0, 0]);
+    expect(newShip.hits).toEqual([[0, 0]]);
   });
 
   test("hits in the same place are not registered", () => {
-    ship.hit([0, 0]);
-    ship.hit([0, 0]);
-    ship.hit([0, 0]);
-    expect(ship.hits).toEqual([[0, 0]]);
+    const newShip = ship.hit([0, 0]).hit([0, 0]).hit([0, 0]);
+    expect(newShip.hits).toEqual([[0, 0]]);
   });
 });
 
@@ -84,33 +87,24 @@ describe("hasPosition", () => {
 describe("isSunk", () => {
   test("ship does not start the game sunk", () => {
     const result = ship.isSunk();
-    expect(result).toEqual(expect.any(Boolean));
     expect(result).toBe(false);
   });
 
   test("ship is sunk after correct hits", () => {
-    ship.hit([0, 0]);
-    ship.hit([0, 1]);
-    ship.hit([0, 2]);
-    const result = ship.isSunk();
-    expect(result).toEqual(expect.any(Boolean));
+    const newShip = ship.hit([0, 0]).hit([0, 1]).hit([0, 2]);
+    const result = newShip.isSunk();
     expect(result).toBe(true);
   });
 
   test("ship is not sunk after too few hits", () => {
-    ship.hit([0, 0]);
-    ship.hit([0, 1]);
-    const result = ship.isSunk();
-    expect(result).toEqual(expect.any(Boolean));
+    const newShip = ship.hit([0, 0]).hit([0, 1]);
+    const result = newShip.isSunk();
     expect(result).toBe(false);
   });
 
   test("ship is not sunk after hits in the same place", () => {
-    ship.hit([0, 0]);
-    ship.hit([0, 0]);
-    ship.hit([0, 0]);
-    const result = ship.isSunk();
-    expect(result).toEqual(expect.any(Boolean));
+    const newShip = ship.hit([0, 0]).hit([0, 0]).hit([0, 0]);
+    const result = newShip.isSunk();
     expect(result).toBe(false);
   });
 });
