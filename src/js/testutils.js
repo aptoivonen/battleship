@@ -132,6 +132,7 @@ const randoms = [
   0.7827344960292772, 0.5881383758884802, 0.6582939216593158,
   0.3436509599877541, 0.09409175263624203,
 ];
+
 function makeRandomMock() {
   let mock = jest.fn();
   for (const random of randoms) {
@@ -140,4 +141,13 @@ function makeRandomMock() {
   return mock;
 }
 
-export { makeRandomMock };
+// samples only arrays
+function makeArraySampleMock() {
+  return function sample(array) {
+    const random = makeRandomMock();
+    const randomIndex = Math.floor(random() * array.length);
+    return array[randomIndex];
+  };
+}
+
+export { makeRandomMock, makeArraySampleMock };
