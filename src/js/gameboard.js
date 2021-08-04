@@ -2,20 +2,14 @@ class GameBoard {
   #width;
   #height;
   #status;
-  #shipLocations;
+  #ships;
   #hits;
 
-  constructor(
-    width,
-    height,
-    status = "initial",
-    shipLocations = [],
-    hits = []
-  ) {
+  constructor(width, height, status = "initial", ships = [], hits = []) {
     this.#width = width;
     this.#height = height;
     this.#status = status;
-    this.#shipLocations = shipLocations;
+    this.#ships = ships;
     this.#hits = hits;
   }
 
@@ -27,26 +21,28 @@ class GameBoard {
     return this.#height;
   }
 
-  add({ ship, location, shipMappingFunction }) {
+  get ships() {
+    return this.#ships;
+  }
+
+  get hits() {
+    return this.#hits;
+  }
+
+  add(ship) {
     if (!ship) {
       throw new TypeError("ship is missing");
     }
-    if (!location) {
-      throw new TypeError("location is missing");
-    }
-    if (!shipMappingFunction || typeof shipMappingFunction !== "function") {
-      throw new TypeError(
-        "shipMappingFunction is missing or is not a function"
-      );
-    }
-    const newShipLocation = { ship, location, shipMappingFunction };
-    if (this.#detectCollision(newShipLocation)) {
-      throw new RangeError("added ship collided with another ship");
-    }
-    if (!this.#isShipLocationWithinBounds(newShipLocation)) {
+
+    if (!this.#isShipWithinBounds(ship)) {
       throw new RangeError("ship dimensions out of bounds");
     }
-    this.#shipLocations.push(newShipLocation);
+
+    if (this.#detectCollision(ship)) {
+      throw new RangeError("added ship collided with another ship");
+    }
+
+    this.#ships.push(ship);
     return this;
   }
 
@@ -58,53 +54,21 @@ class GameBoard {
       return this;
     }
     const newHits = [...this.#hits, [x, y]];
+
+    let newShips = this.#ships;
+    const shipWithPosition = this.#findShip([x, y]);
+    if (shipWithPosition) {
+      newShips = newShips.filter((ship) => ship !== shipWithPosition);
+      const newHitShip = shipWithPosition.hit([x, y]);
+      newShips.push(newHitShip);
+    }
+
     // default new status
     let newStatus = "running";
-    const shipAndIndex = this.#findShipAndIndex([x, y]);
-    if (shipAndIndex) {
-      shipAndIndex.ship.hit(shipAndIndex.index);
-    }
-    if (
-      this.#shipLocations.length > 0 &&
-      this.#shipLocations.every((shipLoc) => shipLoc.ship.isSunk())
-    ) {
+    if (newShips.length > 0 && newShips.every((ship) => ship.isSunk())) {
       newStatus = "lost";
     }
-    return new GameBoard(
-      this.width,
-      this.height,
-      newStatus,
-      this.#shipLocations,
-      newHits
-    );
-  }
-
-  /* 
-    . : empty
-    s : ship (non-hit portion)
-    x : miss (in the water)
-    X : hit (on a ship)
-  */
-  getBoard() {
-    let result = "";
-    for (let row = 0; row < this.height; row++) {
-      for (let column = 0; column < this.width; column++) {
-        let char;
-        const hit = this.#findHit([column, row]);
-        const ship = this.#findShip([column, row]);
-        if (hit && ship) {
-          char = "X";
-        } else if (hit) {
-          char = "x";
-        } else if (ship) {
-          char = "s";
-        } else {
-          char = ".";
-        }
-        result += char;
-      }
-    }
-    return result;
+    return new GameBoard(this.width, this.height, newStatus, newShips, newHits);
   }
 
   /* 
@@ -114,37 +78,10 @@ class GameBoard {
     return this.#status;
   }
 
-  #detectCollision(shipLocation) {
-    for (let i = 0; i < shipLocation.ship.length; i++) {
-      const [x, y] = shipLocation.shipMappingFunction(i);
-      if (this.#findShip([x, y])) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  #isShipLocationWithinBounds(shipLocation) {
-    for (let i = 0; i < shipLocation.ship.length; i++) {
-      const [x, y] = shipLocation.shipMappingFunction(i);
-      if (!this.#isWithinBounds([x, y])) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   #findShip([x, y]) {
-    return this.#findShipAndIndex([x, y])?.ship;
-  }
-
-  #findShipAndIndex([x, y]) {
-    for (const shipLoc of this.#shipLocations) {
-      for (let i = 0; i < shipLoc.ship.length; i++) {
-        const [shipX, shipY] = shipLoc.shipMappingFunction(i);
-        if (shipX === x && shipY === y) {
-          return { ship: shipLoc.ship, index: i };
-        }
+    for (const ship of this.#ships) {
+      if (ship.hasPosition([x, y])) {
+        return ship;
       }
     }
     return null;
@@ -156,6 +93,24 @@ class GameBoard {
 
   #isWithinBounds([x, y]) {
     return x >= 0 && x < this.width && y >= 0 && y < this.height;
+  }
+
+  #isShipWithinBounds(ship) {
+    for (const position of ship.positions) {
+      if (!this.#isWithinBounds(position)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  #detectCollision(newShip) {
+    for (const position of newShip.positions) {
+      if (this.#findShip(position)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 
