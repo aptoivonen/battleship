@@ -1,0 +1,31 @@
+.boards-section {
+  display: flex;
+}
+
+.board {
+  &-title {
+    margin: 0 0 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    width: 400px;
+    height: 400px;
+  }
+
+  &-cell:nth-child(odd) {
+    background: #fff;
+  }
+
+  &-cell:nth-child(even) {
+    background: #555;
+  }
+}
+
+.board:first-child {
+  margin-right: 40px;
+}
