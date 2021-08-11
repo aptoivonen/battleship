@@ -12,6 +12,63 @@ describe("width and height getters", () => {
   });
 });
 
+describe("add method", () => {
+  const eastwardsCruiser = shipFactory.create("cruiser", [0, 0], "eastwards");
+  const southwardsCruiser = shipFactory.create("cruiser", [0, 1], "southwards");
+
+  test("returns a GameBoard object", () => {
+    const board = new GameBoard(10, 10).add(eastwardsCruiser);
+    expect(board).toEqual(expect.any(GameBoard));
+  });
+
+  test("throws TypeError if ship was missing", () => {
+    expect(() => {
+      new GameBoard(10, 10).add();
+    }).toThrow(new TypeError("ship is missing"));
+  });
+
+  test("throw Error if adding ship after game is no longer in 'initial' state", () => {
+    expect(() => {
+      new GameBoard(10, 10)
+        .add(eastwardsCruiser)
+        .receiveAttack([0, 0])
+        .add(southwardsCruiser);
+    }).toThrow(new Error("can't add ships after game has started"));
+  });
+
+  test("adding one ship within bounds", () => {
+    const board = new GameBoard(10, 10).add(eastwardsCruiser);
+    expect(board.ships).toHaveLength(1);
+  });
+
+  test("adding multiple ships within bounds", () => {
+    const board = new GameBoard(10, 10)
+      .add(eastwardsCruiser)
+      .add(southwardsCruiser);
+    expect(board.ships).toHaveLength(2);
+  });
+
+  test("adding one ship out-of-bounds", () => {
+    expect(() => {
+      const outShip = shipFactory.create("cruiser", [0, 0], "westwards");
+      new GameBoard(10, 10).add(outShip);
+    }).toThrow(new RangeError("ship dimensions out of bounds"));
+  });
+
+  test("two ships colliding throws RangeError", () => {
+    expect(() => {
+      const collidingWestwardsCruiser = shipFactory.create(
+        "cruiser",
+        [2, 0],
+        "westwards"
+      );
+      new GameBoard(10, 10)
+        .add(eastwardsCruiser)
+        .add(collidingWestwardsCruiser);
+    }).toThrow(new RangeError("added ship collided with another ship"));
+  });
+});
+
 describe("receiveAttack method", () => {
   test("returns a gameBoard object", () => {
     const board = new GameBoard(10, 10);
@@ -75,54 +132,6 @@ describe("receiveAttack method", () => {
       .receiveAttack([1, 2])
       .receiveAttack([1, 2]);
     expect(isEqual(board.hits.sort(), [[1, 2]].sort())).toBe(true);
-  });
-});
-
-describe("add method", () => {
-  const eastwardsCruiser = shipFactory.create("cruiser", [0, 0], "eastwards");
-  const southwardsCruiser = shipFactory.create("cruiser", [0, 1], "southwards");
-
-  test("returns a GameBoard object", () => {
-    const board = new GameBoard(10, 10).add(eastwardsCruiser);
-    expect(board).toEqual(expect.any(GameBoard));
-  });
-
-  test("throws TypeError if ship was missing", () => {
-    expect(() => {
-      new GameBoard(10, 10).add();
-    }).toThrow(new TypeError("ship is missing"));
-  });
-
-  test("adding one ship within bounds", () => {
-    const board = new GameBoard(10, 10).add(eastwardsCruiser);
-    expect(board.ships).toHaveLength(1);
-  });
-
-  test("adding multiple ships within bounds", () => {
-    const board = new GameBoard(10, 10)
-      .add(eastwardsCruiser)
-      .add(southwardsCruiser);
-    expect(board.ships).toHaveLength(2);
-  });
-
-  test("adding one ship out-of-bounds", () => {
-    expect(() => {
-      const outShip = shipFactory.create("cruiser", [0, 0], "westwards");
-      new GameBoard(10, 10).add(outShip);
-    }).toThrow(new RangeError("ship dimensions out of bounds"));
-  });
-
-  test("two ships colliding throws RangeError", () => {
-    expect(() => {
-      const collidingWestwardsCruiser = shipFactory.create(
-        "cruiser",
-        [2, 0],
-        "westwards"
-      );
-      new GameBoard(10, 10)
-        .add(eastwardsCruiser)
-        .add(collidingWestwardsCruiser);
-    }).toThrow(new RangeError("added ship collided with another ship"));
   });
 });
 

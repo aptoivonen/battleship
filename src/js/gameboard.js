@@ -30,6 +30,10 @@ class GameBoard {
   }
 
   add(ship) {
+    if (this.#status !== "initial") {
+      throw new Error("can't add ships after game has started");
+    }
+
     if (!ship) {
       throw new TypeError("ship is missing");
     }
