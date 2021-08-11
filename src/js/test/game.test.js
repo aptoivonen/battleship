@@ -1,5 +1,5 @@
 import Game from "../game";
-import { makeRandomMock, makeArraySampleMock } from "../testutils";
+import { makeRandomMock, makeArraySampleMock } from "./testutils";
 
 let randomMock;
 let arraySampleMock;

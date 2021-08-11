@@ -1,7 +1,7 @@
 import GameBoardFactory from "../gameboardfactory";
 import GameBoard from "../gameboard";
 import ShipFactory from "../shipfactory";
-import { makeRandomMock, makeArraySampleMock } from "../testutils";
+import { makeRandomMock, makeArraySampleMock } from "./testutils";
 
 // common shipFactory for all tests
 const shipFactory = new ShipFactory();

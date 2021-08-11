@@ -1,7 +1,7 @@
 import GameBoardFactory from "../gameboardfactory";
 import ShipFactory from "../shipfactory";
 import perfomAiMove from "../ai";
-import { makeRandomMock, makeArraySampleMock } from "../testutils";
+import { makeRandomMock, makeArraySampleMock } from "./testutils";
 
 // common shipFactory for all tests
 const shipFactory = new ShipFactory();
