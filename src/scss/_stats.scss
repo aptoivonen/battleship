@@ -6,6 +6,17 @@
   &-text {
     font-size: 2rem;
     font-style: bold;
-    color: variables.$white;
+  }
+
+  &-text--running {
+    color: variables.$white-color;
+  }
+
+  &-text--lost {
+    color: variables.$danger-color;
+  }
+
+  &-text--won {
+    color: variables.$success-color;
   }
 }
