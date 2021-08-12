@@ -1,3 +1,8 @@
+@use "sass:color";
+@use "variables";
+
+$cell-border-width: 2px;
+
 .boards-section {
   display: flex;
 }
@@ -15,14 +20,45 @@
     grid-template-rows: repeat(10, 1fr);
     width: 400px;
     height: 400px;
+    border-top: $cell-border-width solid variables.$cell-border-color;
+    border-left: $cell-border-width solid variables.$cell-border-color;
   }
 
-  &-cell:nth-child(odd) {
-    background: #fff;
+  &-cell {
+    position: relative;
+    border-bottom: $cell-border-width solid variables.$cell-border-color;
+    border-right: $cell-border-width solid variables.$cell-border-color;
+    background: variables.$cell-color;
   }
 
-  &-cell:nth-child(even) {
-    background: #555;
+  .ai-board &-cell:hover {
+    cursor: crosshair;
+    background: color.scale(variables.$cell-color, $lightness: 40%);
+  }
+
+  &-cell--ship {
+    background: variables.$ship-color;
+  }
+
+  &-cell--miss::before,
+  &-cell--hit::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+  }
+
+  &-cell--miss::before {
+    background: variables.$miss-dot-color;
+  }
+
+  &-cell--hit::before {
+    background: variables.$hit-dot-color;
   }
 }
 

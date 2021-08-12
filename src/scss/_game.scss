@@ -1,8 +1,10 @@
+@use "variables";
+
 .game-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: coral;
+  background: variables.$primary-color;
 }
 
 .game-section {

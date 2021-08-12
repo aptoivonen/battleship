@@ -1,9 +1,11 @@
+@use "variables";
+
 .stats-section {
   padding: 1rem 0;
 
   &-text {
     font-size: 2rem;
     font-style: bold;
-    color: white;
+    color: variables.$white;
   }
 }

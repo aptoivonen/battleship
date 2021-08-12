@@ -1,9 +1,11 @@
+@use "variables";
+
 .header {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 5rem;
-  background: lightblue;
+  background: variables.$primary-color;
 }
 
 .main-title {

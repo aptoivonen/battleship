@@ -1,6 +1,5 @@
 @use "sass:color";
-
-$bg-color: #6aff73;
+@use "variables";
 
 .restart-btn {
   margin-top: 1rem;
@@ -8,15 +7,17 @@ $bg-color: #6aff73;
   font-family: inherit;
   font-size: 1rem;
   text-transform: uppercase;
+  color: inherit;
   border: none;
-  background: $bg-color;
+  background: variables.$secondary-color;
 }
 
 .restart-btn:hover {
-  box-shadow: 0 0 3px 3px color.scale($bg-color, $lightness: 20%);
-  background: color.scale($bg-color, $lightness: 20%);
+  box-shadow: 0 0 3px 3px
+    color.scale(variables.$secondary-color, $lightness: 20%);
+  background: color.scale(variables.$secondary-color, $lightness: 20%);
 }
 
 .restart-btn:active {
-  background: color.scale($bg-color, $lightness: -40%);
+  background: color.scale(variables.$secondary-color, $lightness: -40%);
 }
