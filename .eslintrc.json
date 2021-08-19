@@ -30,7 +30,8 @@
     "no-plusplus": "off",
     "no-restricted-syntax": "off",
     "dot-notation": "off",
-    "lines-between-class-members": "off"
+    "lines-between-class-members": "off",
+    "no-nested-ternary": "off"
   },
   "env": {
     "browser": true,
