@@ -15,6 +15,7 @@ class AiBoard {
     this.#game = game;
     this.#dispatch = dispatch;
     this.#createDom();
+    this.#setupHandlers();
     this.syncGame(game);
   }
 
@@ -35,7 +36,6 @@ class AiBoard {
     title.textContent = titleText;
     dom.appendChild(title);
     const grid = createElement("div", "board-grid");
-    grid.addEventListener("click", this.#clickHandler.bind(this));
     dom.appendChild(grid);
     for (let row = 0; row < this.#boardHeight; row++) {
       for (let column = 0; column < this.#boardWidth; column++) {
@@ -47,6 +47,12 @@ class AiBoard {
     }
 
     this.#dom = dom;
+  }
+
+  #setupHandlers() {
+    this.#dom
+      .querySelector(".board-grid")
+      .addEventListener("click", this.#clickHandler.bind(this));
   }
 
   #decorateGameCell(cell) {
