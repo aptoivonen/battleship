@@ -4,14 +4,16 @@ const titleText = "Computer's Board";
 
 class AiBoard {
   #game;
+  #dispatch;
   #dom;
   #boardWidth;
   #boardHeight;
 
-  constructor(game) {
-    this.#boardWidth = 10;
-    this.#boardHeight = 10;
+  constructor(game, dispatch) {
+    this.#boardWidth = game.getBoards()[0].width;
+    this.#boardHeight = game.getBoards()[0].height;
     this.#game = game;
+    this.#dispatch = dispatch;
     this.#createDom();
     this.syncGame(game);
   }
@@ -22,10 +24,8 @@ class AiBoard {
 
   syncGame(game) {
     this.#game = game;
-    for (let row = 0; row < this.#boardHeight; row++) {
-      for (let column = 0; column < this.#boardWidth; column++) {
-        this.#setGameCell(this.#findCell(row, column), row, column);
-      }
+    for (const cell of this.#getCells()) {
+      this.#decorateGameCell(cell);
     }
   }
 
@@ -35,20 +35,23 @@ class AiBoard {
     title.textContent = titleText;
     dom.appendChild(title);
     const grid = createElement("div", "board-grid");
+    grid.addEventListener("click", this.#clickHandler.bind(this));
     dom.appendChild(grid);
     for (let row = 0; row < this.#boardHeight; row++) {
       for (let column = 0; column < this.#boardWidth; column++) {
         const cell = createElement("div");
         cell.dataset.x = column;
         cell.dataset.y = row;
-        grid.appendChild(this.#setGameCell(cell, row, column));
+        grid.appendChild(this.#decorateGameCell(cell));
       }
     }
 
     this.#dom = dom;
   }
 
-  #setGameCell(cell, row, column) {
+  #decorateGameCell(cell) {
+    const row = parseInt(cell.dataset.y, 10);
+    const column = parseInt(cell.dataset.x, 10);
     const aiBoard = this.#game.getBoards()[1];
     const { ships } = aiBoard;
     let hasShip = false;
@@ -73,8 +76,23 @@ class AiBoard {
     return cell;
   }
 
-  #findCell(row, column) {
-    return this.#dom.querySelector(`[data-x="${column}"][data-y="${row}"]`);
+  *#getCells() {
+    for (const cell of this.#dom.querySelector(".board-grid").children) {
+      yield cell;
+    }
+  }
+
+  #clickHandler(event) {
+    const cell = event.target.closest(".board-cell");
+    if (cell) {
+      const column = parseInt(cell.dataset.x, 10);
+      const row = parseInt(cell.dataset.y, 10);
+      this.#attack(column, row);
+    }
+  }
+
+  #attack(column, row) {
+    this.#dispatch(this.#game.attack([column, row]));
   }
 }
 

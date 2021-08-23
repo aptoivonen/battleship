@@ -9,8 +9,8 @@ class PlayerBoard {
   #boardHeight;
 
   constructor(game) {
-    this.#boardWidth = 10;
-    this.#boardHeight = 10;
+    this.#boardWidth = game.getBoards()[0].width;
+    this.#boardHeight = game.getBoards()[0].height;
     this.#game = game;
     this.#createDom();
     this.syncGame(game);
