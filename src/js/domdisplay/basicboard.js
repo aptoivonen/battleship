@@ -5,6 +5,7 @@ class BasicBoard {
   #dispatch;
   #dom;
   #boardIndex;
+  #showShips;
 
   constructor({
     game,
@@ -17,12 +18,12 @@ class BasicBoard {
     this.#game = game;
     this.#dispatch = dispatch;
     this.#boardIndex = boardIndex;
+    this.#showShips = showShips;
     this.#createDom({
       boardWidth: game.getBoards()[boardIndex].width,
       boardHeight: game.getBoards()[boardIndex].height,
       titleText,
       boardClassName,
-      showShips,
     });
     this.syncGame(game);
   }
@@ -42,13 +43,7 @@ class BasicBoard {
     this.#dom.querySelector(".board-grid").addEventListener("click", handler);
   }
 
-  #createDom({
-    boardWidth,
-    boardHeight,
-    titleText,
-    boardClassName,
-    showShips,
-  }) {
+  #createDom({ boardWidth, boardHeight, titleText, boardClassName }) {
     const dom = createElement("div", `board ${boardClassName}`);
     const title = createElement("p", "board-title");
     title.textContent = titleText;
@@ -60,21 +55,21 @@ class BasicBoard {
         const cell = createElement("div");
         cell.dataset.x = column;
         cell.dataset.y = row;
-        grid.appendChild(this.#decorateGameCell(cell, showShips));
+        grid.appendChild(this.#decorateGameCell(cell));
       }
     }
 
     this.#dom = dom;
   }
 
-  #decorateGameCell(cell, showShips) {
+  #decorateGameCell(cell) {
     const board = this.#game.getBoards()[this.#boardIndex];
     const row = parseInt(cell.dataset.y, 10);
     const column = parseInt(cell.dataset.x, 10);
     const hasShip = this.#hasShip(board, column, row);
     const hasShot = this.#hasShot(board, column, row);
     let className = "board-cell";
-    if (showShips && hasShip) {
+    if (this.#showShips && hasShip) {
       className += " board-cell--ship";
     }
     className += hasShot
