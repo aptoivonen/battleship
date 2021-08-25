@@ -9,6 +9,8 @@ const numberOfShipsTable = {
   submarine: 5,
 };
 Object.setPrototypeOf(numberOfShipsTable, null);
+Object.freeze(numberOfShipsTable);
+
 const directions = ["northwards", "eastwards", "southwards", "westwards"];
 
 class GameBoardFactory {

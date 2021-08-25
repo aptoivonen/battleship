@@ -8,6 +8,7 @@ const shipLookupTable = {
   submarine: { length: 1 },
 };
 Object.setPrototypeOf(shipLookupTable, null);
+Object.freeze(shipLookupTable);
 
 const directionLookupTable = {
   northwards: ([locationX, locationY], index) => [locationX, locationY - index],
