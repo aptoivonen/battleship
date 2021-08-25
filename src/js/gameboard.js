@@ -38,11 +38,11 @@ class GameBoard {
       throw new TypeError("ship is missing");
     }
 
-    if (!this.#isShipWithinBounds(ship)) {
+    if (!this.isShipWithinBounds(ship)) {
       throw new RangeError("ship dimensions out of bounds");
     }
 
-    if (this.#detectCollision(ship)) {
+    if (this.detectCollision(ship)) {
       throw new RangeError("added ship collided with another ship");
     }
 
@@ -82,6 +82,28 @@ class GameBoard {
     return this.#status;
   }
 
+  findHit([x, y]) {
+    return this.#hits.find(([hitX, hitY]) => hitX === x && hitY === y);
+  }
+
+  isShipWithinBounds(ship) {
+    for (const position of ship.positions) {
+      if (!this.#isWithinBounds(position)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  detectCollision(newShip) {
+    for (const position of newShip.positions) {
+      if (this.#findShip(position)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   #findShip([x, y]) {
     for (const ship of this.#ships) {
       if (ship.hasPosition([x, y])) {
@@ -91,30 +113,8 @@ class GameBoard {
     return null;
   }
 
-  findHit([x, y]) {
-    return this.#hits.find(([hitX, hitY]) => hitX === x && hitY === y);
-  }
-
   #isWithinBounds([x, y]) {
     return x >= 0 && x < this.width && y >= 0 && y < this.height;
-  }
-
-  #isShipWithinBounds(ship) {
-    for (const position of ship.positions) {
-      if (!this.#isWithinBounds(position)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  #detectCollision(newShip) {
-    for (const position of newShip.positions) {
-      if (this.#findShip(position)) {
-        return true;
-      }
-    }
-    return false;
   }
 }
 

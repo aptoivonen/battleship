@@ -165,6 +165,34 @@ describe("receiveAttack with ships on the board", () => {
   });
 });
 
+describe("isShipWithinBounds", () => {
+  test("ship within bounds returns true", () => {
+    const eastwardsCruiser = shipFactory.create("cruiser", [0, 0], "eastwards");
+    const result = new GameBoard(10, 10).isShipWithinBounds(eastwardsCruiser);
+    expect(result).toBe(true);
+  });
+
+  test("ship out of bounds returns false", () => {
+    const outShip = shipFactory.create("cruiser", [0, 0], "westwards");
+    const result = new GameBoard(10, 10).isShipWithinBounds(outShip);
+    expect(result).toBe(false);
+  });
+});
+
+describe("detectCollision", () => {
+  test("two ships colliding returns true", () => {
+    const eastwardsCruiser = shipFactory.create("cruiser", [0, 0], "eastwards");
+    const collidingWestwardsCruiser = shipFactory.create(
+      "cruiser",
+      [2, 0],
+      "westwards"
+    );
+    const gameBoard = new GameBoard(10, 10).add(eastwardsCruiser);
+    const result = gameBoard.detectCollision(collidingWestwardsCruiser);
+    expect(result).toBe(true);
+  });
+});
+
 describe("getStatus", () => {
   const eastwardsCruiser = shipFactory.create("cruiser", [0, 0], "eastwards");
   const southwardsCruiser = shipFactory.create("cruiser", [0, 1], "southwards");
