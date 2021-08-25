@@ -44,6 +44,26 @@ describe("create", () => {
   });
 });
 
+describe("getNumberOfShipsInfo", () => {
+  test("returns correct info object", () => {
+    expect(
+      new GameBoardFactory(
+        shipFactory,
+        makeRandomMock(),
+        makeArraySampleMock()
+      ).getNumberOfShipsInfo()
+    ).toEqual(
+      expect.objectContaining({
+        carrier: 1,
+        battleship: 2,
+        cruiser: 3,
+        destroyer: 4,
+        submarine: 5,
+      })
+    );
+  });
+});
+
 describe("creates 1 carrier, 2 battleships, 3 cruisers, 4 destroyers, 5 submarines", () => {
   const [
     numberOfCarriers,

@@ -46,6 +46,10 @@ class GameBoardFactory {
     return gameBoard;
   }
 
+  getNumberOfShipsInfo() {
+    return numberOfShipsTable;
+  }
+
   #getRandomSquare(gameBoard) {
     const x = Math.floor(this.#random() * gameBoard.width);
     const y = Math.floor(this.#random() * gameBoard.height);
