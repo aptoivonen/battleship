@@ -2,25 +2,30 @@ import ShipFactory from "./shipfactory";
 import GameBoardFactory from "./gameboardfactory";
 import perfomAiMove from "./ai";
 
+const shipFactory = new ShipFactory();
+
 class Game {
   #random;
   #sample;
   #playerBoard;
   #aiBoard;
+  #shipInfo;
 
-  constructor(randomizeFn, sampleFn, playerBoard, aiBoard) {
+  constructor(randomizeFn, sampleFn, playerBoard, aiBoard, shipInfo) {
     if (arguments.length < 2) {
       throw new TypeError("too few arguments supplied; 2 are required");
     }
     this.#random = randomizeFn;
     this.#sample = sampleFn;
     const gameBoardFactory = new GameBoardFactory(
-      new ShipFactory(),
+      shipFactory,
       this.#random,
       this.#sample
     );
     this.#playerBoard = playerBoard ?? gameBoardFactory.create("player");
     this.#aiBoard = aiBoard ?? gameBoardFactory.create("ai");
+    this.#shipInfo =
+      shipInfo ?? this.#createShipInfo(shipFactory, gameBoardFactory);
   }
 
   get width() {
@@ -47,6 +52,10 @@ class Game {
     return result;
   }
 
+  getShipInfo() {
+    return this.#shipInfo;
+  }
+
   getBoards() {
     return [this.#playerBoard, this.#aiBoard];
   }
@@ -67,6 +76,17 @@ class Game {
     }
 
     return result;
+  }
+
+  #createShipInfo(shipFactoryInstance, gameBoardFactoryInstance) {
+    const shipInfoTable = Object.create(null);
+    const shipSizeInfo = shipFactoryInstance.getShipSizeInfo();
+    const numberOfShipsInfo = gameBoardFactoryInstance.getNumberOfShipsInfo();
+    for (const [key, sizeValue] of Object.entries(shipSizeInfo)) {
+      const numberValue = numberOfShipsInfo[key];
+      shipInfoTable[key] = { ...sizeValue, numberOfShips: numberValue };
+    }
+    return shipInfoTable;
   }
 }
 

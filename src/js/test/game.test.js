@@ -23,7 +23,7 @@ describe("constructor", () => {
   });
 });
 
-describe("attack method", () => {
+describe("attack", () => {
   test("attacking outside the board throws RangeError", () => {
     // board is 10 x 10
     expect(() => {
@@ -44,6 +44,21 @@ describe("attack method", () => {
     const game2 = game1.attack([1, 2]);
     const game3 = game2.attack([1, 2]);
     expect(game2).toBe(game3);
+  });
+});
+
+describe("getShipInfo", () => {
+  test("returns an object", () => {
+    const game = new Game(randomMock, arraySampleMock);
+    expect(game.getShipInfo()).toEqual(
+      expect.objectContaining({
+        carrier: { length: 5, numberOfShips: 1 },
+        battleship: { length: 4, numberOfShips: 2 },
+        cruiser: { length: 3, numberOfShips: 3 },
+        destroyer: { length: 2, numberOfShips: 4 },
+        submarine: { length: 1, numberOfShips: 5 },
+      })
+    );
   });
 });
 
