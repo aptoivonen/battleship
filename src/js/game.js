@@ -1,6 +1,5 @@
 import ShipFactory from "./shipfactory";
 import GameBoardFactory from "./gameboardfactory";
-import pubsubInstance from "./pubsub";
 import perfomAiMove from "./ai";
 
 class Game {
@@ -8,9 +7,8 @@ class Game {
   #sample;
   #playerBoard;
   #aiBoard;
-  #pubsub;
 
-  constructor(randomizeFn, sampleFn, playerBoard, aiBoard, pubsub) {
+  constructor(randomizeFn, sampleFn, playerBoard, aiBoard) {
     if (arguments.length < 2) {
       throw new TypeError("too few arguments supplied; 2 are required");
     }
@@ -23,7 +21,6 @@ class Game {
     );
     this.#playerBoard = playerBoard ?? gameBoardFactory.create("player");
     this.#aiBoard = aiBoard ?? gameBoardFactory.create("ai");
-    this.#pubsub = pubsub ?? pubsubInstance;
   }
 
   get width() {
@@ -43,25 +40,8 @@ class Game {
 
     const newAiBoard = this.#aiBoard.receiveAttack([x, y]);
     if (newAiBoard !== this.#aiBoard) {
-      const playerResult = new Game(
-        this.#random,
-        this.#sample,
-        this.#playerBoard,
-        newAiBoard,
-        this.#pubsub
-      );
-      this.#pubsub.publish("playermove", playerResult);
       const newPlayerBoard = perfomAiMove(this.#playerBoard, this.#sample);
-      result = new Game(
-        this.#random,
-        this.#sample,
-        newPlayerBoard,
-        newAiBoard,
-        this.#pubsub
-      );
-      if (newPlayerBoard !== this.#playerBoard) {
-        this.#pubsub.publish("aimove", result);
-      }
+      result = new Game(this.#random, this.#sample, newPlayerBoard, newAiBoard);
     }
 
     return result;
@@ -87,14 +67,6 @@ class Game {
     }
 
     return result;
-  }
-
-  subscribe(topic, fn) {
-    this.#pubsub.subscribe(topic, fn);
-  }
-
-  unsubscribe(topic, fn) {
-    this.#pubsub.unsubscribe(topic, fn);
   }
 }
 
