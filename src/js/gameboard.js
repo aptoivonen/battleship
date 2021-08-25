@@ -76,7 +76,7 @@ class GameBoard {
   }
 
   /* 
-    Statuses: 'initial', 'running', and 'lost'
+    Statuses: 'placement', 'initial', 'running', and 'lost'
   */
   getStatus() {
     return this.#status;
