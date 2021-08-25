@@ -63,12 +63,16 @@ describe("getShipInfo", () => {
 });
 
 describe("getBoards", () => {
-  test("returns two initialized boards", () => {
+  test("returns an initialized board for ai", () => {
+    const boards = new Game(randomMock, arraySampleMock).getBoards();
+    expect(boards[1].hits).toHaveLength(0);
+    expect(boards[1].ships.length).toBeGreaterThan(0);
+  });
+
+  test("returns a 'placement' board for player", () => {
     const boards = new Game(randomMock, arraySampleMock).getBoards();
     expect(boards[0].hits).toHaveLength(0);
-    expect(boards[1].hits).toHaveLength(0);
-    expect(boards[0].ships.length).toBeGreaterThan(0);
-    expect(boards[1].ships.length).toBeGreaterThan(0);
+    expect(boards[0].ships).toHaveLength(0);
   });
 
   test("ai board is changed after fresh attack", () => {
@@ -89,9 +93,9 @@ describe("getBoards", () => {
 });
 
 describe("getStatus", () => {
-  test("returns 'initial' for a new game", () => {
+  test("returns 'placement' for a new game", () => {
     const result = new Game(randomMock, arraySampleMock).getStatus();
-    expect(result).toBe("initial");
+    expect(result).toBe("placement");
   });
 
   test("returns 'running' after one attack", () => {

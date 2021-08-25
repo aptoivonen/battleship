@@ -62,14 +62,15 @@ class Game {
 
   getStatus() {
     let result;
-    if (this.#playerBoard.getStatus() === "lost") {
+    const playerBoardStatus = this.#playerBoard.getStatus();
+    const aiBoardStatus = this.#aiBoard.getStatus();
+    if (playerBoardStatus === "lost") {
       result = "lost";
-    } else if (this.#aiBoard.getStatus() === "lost") {
+    } else if (aiBoardStatus === "lost") {
       result = "won";
-    } else if (
-      this.#playerBoard.getStatus() === "initial" &&
-      this.#aiBoard.getStatus() === "initial"
-    ) {
+    } else if (playerBoardStatus === "placement") {
+      result = "placement";
+    } else if (playerBoardStatus === "initial" && aiBoardStatus === "initial") {
       result = "initial";
     } else {
       result = "running";
