@@ -71,3 +71,17 @@ describe("create", () => {
     });
   });
 });
+
+describe("getShipSizeInfo", () => {
+  test("getShipSizeInfo returns correct object", () => {
+    expect(shipFactory.getShipSizeInfo()).toEqual(
+      expect.objectContaining({
+        carrier: { length: 5 },
+        battleship: { length: 4 },
+        cruiser: { length: 3 },
+        destroyer: { length: 2 },
+        submarine: { length: 1 },
+      })
+    );
+  });
+});

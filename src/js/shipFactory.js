@@ -46,6 +46,10 @@ class ShipFactory {
     );
     return new Ship(positions);
   }
+
+  getShipSizeInfo() {
+    return shipLookupTable;
+  }
 }
 
 export default ShipFactory;
