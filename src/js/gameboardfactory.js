@@ -13,6 +13,9 @@ Object.freeze(numberOfShipsTable);
 
 const directions = ["northwards", "eastwards", "southwards", "westwards"];
 
+const boardWidth = 10;
+const boardHeight = 10;
+
 class GameBoardFactory {
   #shipFactory;
   #random;
@@ -34,20 +37,80 @@ class GameBoardFactory {
       throw new TypeError("no such player type");
     }
 
-    let gameBoard = new GameBoard(10, 10);
-    for (const [shipType, numberOfShips] of Object.entries(
-      numberOfShipsTable
-    )) {
-      for (let n = 0; n < numberOfShips; n++) {
-        gameBoard = this.#getGameBoardWithNewShip(shipType, gameBoard);
+    let gameBoard = new GameBoard(boardWidth, boardHeight);
+    if (type === "ai") {
+      for (const [shipType, numberOfShips] of Object.entries(
+        numberOfShipsTable
+      )) {
+        for (let n = 0; n < numberOfShips; n++) {
+          gameBoard = this.#getGameBoardWithNewShip(shipType, gameBoard);
+        }
       }
+      gameBoard = new GameBoard(
+        boardWidth,
+        boardHeight,
+        "initial",
+        gameBoard.ships,
+        gameBoard.hits
+      );
     }
 
     return gameBoard;
   }
 
+  canPlaceShip(gameBoard, { type, location, direction }) {
+    const ship = this.#shipFactory.create(type, location, direction);
+    const isShipWithinBounds = gameBoard.isShipWithinBounds(ship);
+    const isShipAvoidingCollision = !gameBoard.detectCollision(ship);
+    const canAddAnotherShipForType = !this.#isNumberOfShipsByTypeFull(
+      type,
+      gameBoard
+    );
+    return (
+      isShipWithinBounds && isShipAvoidingCollision && canAddAnotherShipForType
+    );
+  }
+
+  placeShip(gameBoard, { type, location, direction }) {
+    let newGameBoard;
+    if (this.canPlaceShip(gameBoard, { type, location, direction })) {
+      const newShip = this.#shipFactory.create(type, location, direction);
+      newGameBoard = gameBoard.add(newShip);
+      const allShipsOnBoard = this.#isNumberOfShipsFull(newGameBoard);
+      if (allShipsOnBoard) {
+        newGameBoard = new GameBoard(
+          boardWidth,
+          boardHeight,
+          "initial",
+          gameBoard.ships,
+          gameBoard.hits
+        );
+      }
+    }
+    return newGameBoard;
+  }
+
   getNumberOfShipsInfo() {
     return numberOfShipsTable;
+  }
+
+  #isNumberOfShipsByTypeFull(type, gameBoard) {
+    const allowedNumberOfShips = numberOfShipsTable[type];
+    const shipLength = this.#shipFactory.getShipSizeInfo()[type].length;
+    const numberOfShipsAdded = gameBoard.ships.reduce(
+      (acc, cur) => acc + (cur.positions.length === shipLength ? 1 : 0),
+      0
+    );
+    return numberOfShipsAdded === allowedNumberOfShips;
+  }
+
+  #isNumberOfShipsFull(gameBoard) {
+    for (const type of Object.keys(numberOfShipsTable)) {
+      if (!this.#isNumberOfShipsByTypeFull(type, gameBoard)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   #getRandomSquare(gameBoard) {

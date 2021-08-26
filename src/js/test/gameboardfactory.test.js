@@ -6,6 +6,16 @@ import { makeRandomMock, makeArraySampleMock } from "./testutils";
 // common shipFactory for all tests
 const shipFactory = new ShipFactory();
 
+let gameBoardFactory;
+
+beforeEach(() => {
+  gameBoardFactory = new GameBoardFactory(
+    shipFactory,
+    makeRandomMock(),
+    makeArraySampleMock()
+  );
+});
+
 describe("create", () => {
   test("throws TypeError if arguments to constructor were not supplied", () => {
     expect(() => {
@@ -64,7 +74,7 @@ describe("getNumberOfShipsInfo", () => {
   });
 });
 
-describe("creates 1 carrier, 2 battleships, 3 cruisers, 4 destroyers, 5 submarines", () => {
+describe("create board for ai", () => {
   const [
     numberOfCarriers,
     numberOfBattleships,
@@ -73,12 +83,12 @@ describe("creates 1 carrier, 2 battleships, 3 cruisers, 4 destroyers, 5 submarin
     numberOfSubmarines,
   ] = [1, 2, 3, 4, 5];
 
-  test("correct number of ships", () => {
+  test("correct number of ships: creates 1 carrier, 2 battleships, 3 cruisers, 4 destroyers, 5 submarines", () => {
     const board = new GameBoardFactory(
       shipFactory,
       makeRandomMock(),
       makeArraySampleMock()
-    ).create("player");
+    ).create("ai");
 
     expect(board.ships).toHaveLength(
       numberOfCarriers +
@@ -120,7 +130,7 @@ describe("creates 1 carrier, 2 battleships, 3 cruisers, 4 destroyers, 5 submarin
       shipFactoryMock,
       makeRandomMock(),
       makeArraySampleMock()
-    ).create("player");
+    ).create("ai");
     const shipTypeCount = shipFactoryCreateMock.mock.calls.reduce(
       (acc, fnCall) => {
         const type = fnCall[0];
@@ -134,5 +144,181 @@ describe("creates 1 carrier, 2 battleships, 3 cruisers, 4 destroyers, 5 submarin
     expect(shipTypeCount.cruiser).toBe(numberOfCruisers);
     expect(shipTypeCount.destroyer).toBe(numberOfDestroyers);
     expect(shipTypeCount.submarine).toBe(numberOfSubmarines);
+  });
+});
+
+describe("create board for player", () => {
+  test("starts with 'placement' status", () => {
+    const board = new GameBoardFactory(
+      shipFactory,
+      makeRandomMock(),
+      makeArraySampleMock()
+    ).create("player");
+
+    expect(board.getStatus()).toBe("placement");
+  });
+
+  test("no ships at the beginning", () => {
+    const board = new GameBoardFactory(
+      shipFactory,
+      makeRandomMock(),
+      makeArraySampleMock()
+    ).create("player");
+
+    expect(board.ships).toHaveLength(0);
+  });
+});
+
+describe("canPlaceShip", () => {
+  test("returns false for ship out of bounds", () => {
+    const initialBoard = gameBoardFactory.create("player");
+    const result = gameBoardFactory.canPlaceShip(initialBoard, {
+      type: "carrier",
+      location: [0, 0],
+      direction: "westwards",
+    });
+    expect(result).toBe(false);
+  });
+
+  test("returns true for ship within bounds", () => {
+    const initialBoard = gameBoardFactory.create("player");
+    const result = gameBoardFactory.canPlaceShip(initialBoard, {
+      type: "carrier",
+      location: [0, 0],
+      direction: "eastwards",
+    });
+    expect(result).toBe(true);
+  });
+
+  test("returns false for ship collision", () => {
+    const initialBoard = gameBoardFactory.create("player");
+    const oneCarrierBoard = gameBoardFactory.placeShip(initialBoard, {
+      type: "carrier",
+      location: [0, 0],
+      direction: "eastwards",
+    });
+    const result = gameBoardFactory.canPlaceShip(oneCarrierBoard, {
+      type: "carrier",
+      location: [0, 4],
+      direction: "northwards",
+    });
+    expect(result).toBe(false);
+  });
+
+  test("returns false for second carrier", () => {
+    const initialBoard = gameBoardFactory.create("player");
+    const oneCarrierBoard = gameBoardFactory.placeShip(initialBoard, {
+      type: "carrier",
+      location: [0, 0],
+      direction: "eastwards",
+    });
+    const result = gameBoardFactory.canPlaceShip(oneCarrierBoard, {
+      type: "carrier",
+      location: [0, 1],
+      direction: "eastwards",
+    });
+    expect(result).toBe(false);
+  });
+});
+
+describe("placeShip", () => {
+  test("after adding ship player board has one ship", () => {
+    const initialBoard = gameBoardFactory.create("player");
+    const resultBoard = gameBoardFactory.placeShip(initialBoard, {
+      type: "carrier",
+      location: [0, 0],
+      direction: "eastwards",
+    });
+    expect(resultBoard.ships).toHaveLength(1);
+  });
+
+  test("after adding one ship player board has status 'placement'", () => {
+    const initialBoard = gameBoardFactory.create("player");
+    const resultBoard = gameBoardFactory.placeShip(initialBoard, {
+      type: "carrier",
+      location: [0, 0],
+      direction: "eastwards",
+    });
+    expect(resultBoard.getStatus()).toBe("placement");
+  });
+
+  test("after adding all 5+4+3+2+1 ships board has status 'initial'", () => {
+    const initialBoard = gameBoardFactory.create("player");
+    let resultBoard = gameBoardFactory.placeShip(initialBoard, {
+      type: "carrier",
+      location: [0, 0],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "battleship",
+      location: [0, 1],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "battleship",
+      location: [4, 1],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "cruiser",
+      location: [0, 2],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "cruiser",
+      location: [3, 2],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "cruiser",
+      location: [6, 2],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "destroyer",
+      location: [0, 3],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "destroyer",
+      location: [2, 3],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "destroyer",
+      location: [4, 3],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "destroyer",
+      location: [6, 3],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "submarine",
+      location: [0, 4],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "submarine",
+      location: [1, 4],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "submarine",
+      location: [2, 4],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "submarine",
+      location: [3, 4],
+      direction: "eastwards",
+    });
+    resultBoard = gameBoardFactory.placeShip(resultBoard, {
+      type: "submarine",
+      location: [4, 4],
+      direction: "eastwards",
+    });
+    expect(resultBoard.getStatus()).toBe("initial");
   });
 });
