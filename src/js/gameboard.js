@@ -5,7 +5,7 @@ class GameBoard {
   #ships;
   #hits;
 
-  constructor(width, height, status = "initial", ships = [], hits = []) {
+  constructor(width, height, status = "placement", ships = [], hits = []) {
     this.#width = width;
     this.#height = height;
     this.#status = status;
@@ -30,7 +30,7 @@ class GameBoard {
   }
 
   add(ship) {
-    if (this.#status !== "initial") {
+    if (this.#status !== "placement") {
       throw new Error("can't add ships after game has started");
     }
 
@@ -51,6 +51,10 @@ class GameBoard {
   }
 
   receiveAttack([x, y]) {
+    if (this.#status === "placement") {
+      throw new Error("can't attack board in 'placement' status");
+    }
+
     if (!this.#isWithinBounds([x, y])) {
       throw new RangeError("board coordinates out of bound");
     }
