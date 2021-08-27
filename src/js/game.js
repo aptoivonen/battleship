@@ -7,6 +7,7 @@ const shipFactory = new ShipFactory();
 class Game {
   #random;
   #sample;
+  #gameBoardFactory;
   #playerBoard;
   #aiBoard;
   #shipInfo;
@@ -17,15 +18,15 @@ class Game {
     }
     this.#random = randomizeFn;
     this.#sample = sampleFn;
-    const gameBoardFactory = new GameBoardFactory(
+    this.#gameBoardFactory = new GameBoardFactory(
       shipFactory,
       this.#random,
       this.#sample
     );
-    this.#playerBoard = playerBoard ?? gameBoardFactory.create("player");
-    this.#aiBoard = aiBoard ?? gameBoardFactory.create("ai");
+    this.#playerBoard = playerBoard ?? this.#gameBoardFactory.create("player");
+    this.#aiBoard = aiBoard ?? this.#gameBoardFactory.create("ai");
     this.#shipInfo =
-      shipInfo ?? this.#createShipInfo(shipFactory, gameBoardFactory);
+      shipInfo ?? this.#createShipInfo(shipFactory, this.#gameBoardFactory);
   }
 
   get width() {
@@ -37,6 +38,12 @@ class Game {
   }
 
   attack([x, y]) {
+    if (this.getStatus() === "placement") {
+      throw new Error(
+        "can't start attacking: board still needs ships to be placed"
+      );
+    }
+
     let result = this;
 
     if (/won|lost/.test(this.getStatus())) {
@@ -46,10 +53,40 @@ class Game {
     const newAiBoard = this.#aiBoard.receiveAttack([x, y]);
     if (newAiBoard !== this.#aiBoard) {
       const newPlayerBoard = perfomAiMove(this.#playerBoard, this.#sample);
-      result = new Game(this.#random, this.#sample, newPlayerBoard, newAiBoard);
+      result = new Game(
+        this.#random,
+        this.#sample,
+        newPlayerBoard,
+        newAiBoard,
+        this.#shipInfo
+      );
     }
 
     return result;
+  }
+
+  canPlaceShip({ type, location, direction }) {
+    return this.#gameBoardFactory.canPlaceShip(this.#playerBoard, {
+      type,
+      location,
+      direction,
+    });
+  }
+
+  placeShip({ type, location, direction }) {
+    const newPlayerBoard = this.#gameBoardFactory.placeShip(this.#playerBoard, {
+      type,
+      location,
+      direction,
+      throws: true,
+    });
+    return new Game(
+      this.#random,
+      this.#sample,
+      newPlayerBoard,
+      this.#aiBoard,
+      this.#shipInfo
+    );
   }
 
   getShipInfo() {
