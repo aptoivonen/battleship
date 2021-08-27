@@ -85,7 +85,7 @@ class GameBoardFactory {
   placeShip(gameBoard, { type, location, direction }) {
     let newGameBoard;
     if (
-      this.canPlaceShip(gameBoard, { type, location, direction, throw: true })
+      this.canPlaceShip(gameBoard, { type, location, direction, throws: true })
     ) {
       const newShip = this.#shipFactory.create(type, location, direction);
       newGameBoard = gameBoard.add(newShip);
