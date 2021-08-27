@@ -61,11 +61,11 @@ class GameBoardFactory {
   canPlaceShip(gameBoard, { type, location, direction, throws = false }) {
     const ship = this.#shipFactory.create(type, location, direction);
     const isShipWithinBounds = gameBoard.isShipWithinBounds(ship);
-    if (throws) {
+    if (throws && !isShipWithinBounds) {
       throw new RangeError("placed ship out of bounds");
     }
     const isShipAvoidingCollision = !gameBoard.detectCollision(ship);
-    if (throws) {
+    if (throws && !isShipAvoidingCollision) {
       throw new RangeError(
         "can't place here: placed ship collided with an existing one"
       );
@@ -74,7 +74,7 @@ class GameBoardFactory {
       type,
       gameBoard
     );
-    if (throws) {
+    if (throws && !canAddAnotherShipForType) {
       throw new RangeError(`the game already has enough ships of type ${type}`);
     }
     return (
