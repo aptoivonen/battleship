@@ -1,3 +1,4 @@
+import findKey from "lodash/findKey";
 import { createElement } from "./utils";
 
 class BasicBoard {
@@ -37,6 +38,7 @@ class BasicBoard {
     for (const cell of this.#getCells()) {
       this.#decorateGameCell(cell);
     }
+    this.#updateShips();
   }
 
   setupGridClickHandler(handler) {
@@ -69,9 +71,6 @@ class BasicBoard {
     const hasShip = this.#hasShip(board, column, row);
     const hasShot = this.#hasShot(board, column, row);
     let className = "board-cell";
-    if (this.#showShips && hasShip) {
-      className += " board-cell--ship";
-    }
     className += hasShot
       ? hasShip
         ? " board-cell--hit"
@@ -80,6 +79,48 @@ class BasicBoard {
 
     cell.setAttribute("class", className);
     return cell;
+  }
+
+  #updateShips() {
+    if (!this.#showShips) {
+      return;
+    }
+    const shipElements = this.#dom
+      .querySelector(".board-grid")
+      .querySelectorAll(".ship");
+    shipElements.forEach((shipElement) =>
+      shipElement.parentElement.removeChild(shipElement)
+    );
+    const { ships } = this.#game.getBoards()[this.#boardIndex];
+    ships.forEach((ship) => {
+      const shipElement = createElement("div", "ship");
+      const shipType = this.#findShipType(ship.positions.length);
+      shipElement.classList.add(`ship--${shipType}`);
+      const shipDirection = this.#findShipDirection(ship.positions);
+      shipElement.classList.add(`ship--${shipDirection}`);
+      shipElement.style.setProperty("--column", ship.positions[0][0]);
+      shipElement.style.setProperty("--row", ship.positions[0][1]);
+      this.#dom.querySelector(".board-grid").appendChild(shipElement);
+    });
+  }
+
+  #findShipType(shipLength) {
+    const type =
+      findKey(this.#game.getShipInfo(), { length: shipLength }) || "";
+    return type;
+  }
+
+  #findShipDirection(shipPositions) {
+    if (shipPositions.length === 1) {
+      return "eastwards";
+    }
+    const [dx, dy] = [
+      shipPositions[1][0] - shipPositions[0][0],
+      shipPositions[1][1] - shipPositions[0][1],
+    ];
+    if (dx > 0) return "eastwards";
+    if (dy < 0) return "northwards";
+    return "";
   }
 
   #hasShot(board, column, row) {
@@ -103,7 +144,7 @@ class BasicBoard {
   }
 
   *#getCells() {
-    for (const cell of this.#dom.querySelector(".board-grid").children) {
+    for (const cell of this.#dom.querySelectorAll(".board-cell")) {
       yield cell;
     }
   }
