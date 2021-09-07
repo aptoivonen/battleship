@@ -19,3 +19,14 @@ $cell-border-color: $blue;
 $miss-dot-color: $white;
 $hit-dot-color: $red;
 $ship-color: $grey;
+
+$cell-border-width: 2px;
+
+$grid-width: 400px;
+$grid-height: 400px;
+$grid-rows: 10;
+$grid-columns: 10;
+$ship-padding: 4px;
+
+$ship-rear-border-radius: 6px;
+$ship-front-border-radius: 45%;

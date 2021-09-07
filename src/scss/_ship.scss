@@ -1,0 +1,59 @@
+@use "sass:math";
+@use "variables";
+
+.ship {
+  --square-width: #{math.div(variables.$grid-width, variables.$grid-columns)};
+  --square-height: #{math.div(variables.$grid-height, variables.$grid-columns)};
+  --ship-padding: #{variables.$ship-padding};
+  --ship-width: var(--ship-size);
+  --ship-height: var(--ship-size);
+  position: absolute;
+  top: calc(var(--square-height) * var(--row) + var(--ship-padding));
+  left: calc(var(--square-width) * var(--column) + var(--ship-padding));
+  width: calc(
+    var(--square-width) * var(--ship-width) - 2 * var(--ship-padding)
+  );
+  height: calc(
+    var(--square-height) * var(--ship-height) - 2 * var(--ship-padding)
+  );
+  z-index: 10;
+  border-radius: var(--north-west-border) var(--north-east-border)
+    var(--south-east-border) var(--south-west-border);
+  background: yellow;
+
+  &--carrier {
+    --ship-size: 5;
+  }
+
+  &--battleship {
+    --ship-size: 4;
+  }
+
+  &--cruiser {
+    --ship-size: 3;
+  }
+
+  &--destroyer {
+    --ship-size: 2;
+  }
+
+  &--submarine {
+    --ship-size: 1;
+  }
+
+  &--northwards {
+    --ship-width: 1;
+    --north-west-border: #{variables.$ship-front-border-radius};
+    --north-east-border: #{variables.$ship-front-border-radius};
+    --south-east-border: #{variables.$ship-rear-border-radius};
+    --south-west-border: #{variables.$ship-rear-border-radius};
+  }
+
+  &--eastwards {
+    --ship-height: 1;
+    --north-west-border: #{variables.$ship-rear-border-radius};
+    --north-east-border: #{variables.$ship-front-border-radius};
+    --south-east-border: #{variables.$ship-front-border-radius};
+    --south-west-border: #{variables.$ship-rear-border-radius};
+  }
+}

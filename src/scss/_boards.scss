@@ -1,8 +1,6 @@
 @use "sass:color";
 @use "variables";
 
-$cell-border-width: 2px;
-
 .boards-section {
   display: flex;
 }
@@ -15,19 +13,22 @@ $cell-border-width: 2px;
   }
 
   &-grid {
+    position: relative;
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: repeat(10, 1fr);
-    width: 400px;
-    height: 400px;
-    border-top: $cell-border-width solid variables.$cell-border-color;
-    border-left: $cell-border-width solid variables.$cell-border-color;
+    grid-template-columns: repeat(variables.$grid-columns, 1fr);
+    grid-template-rows: repeat(variables.$grid-rows, 1fr);
+    width: variables.$grid-width + variables.$cell-border-width;
+    height: variables.$grid-height + variables.$cell-border-width;
+    border-top: variables.$cell-border-width solid variables.$cell-border-color;
+    border-left: variables.$cell-border-width solid variables.$cell-border-color;
   }
 
   &-cell {
     position: relative;
-    border-bottom: $cell-border-width solid variables.$cell-border-color;
-    border-right: $cell-border-width solid variables.$cell-border-color;
+    border-bottom: variables.$cell-border-width solid
+      variables.$cell-border-color;
+    border-right: variables.$cell-border-width solid
+      variables.$cell-border-color;
     background: variables.$cell-color;
   }
 
