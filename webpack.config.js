@@ -57,10 +57,11 @@ module.exports = {
     new MiniCssExtractPlugin(),
     new PurgeCssPlugin({
       paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
+      safelist: [/^ship--/],
     }),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
-    })
+    }),
   ],
 
   devtool: isProduction ? "source-map" : "inline-source-map",
