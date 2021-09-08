@@ -1,5 +1,13 @@
 import { createElement } from "./utils";
 
+const statusTexts = {
+  placement: "Player, place Your ships!",
+  initial: "Start playing by attacking Computer's board",
+  running: "Battle!",
+  lost: "You have lost the game",
+  won: "You have won the game",
+};
+
 class Stats {
   #game;
   #dom;
@@ -28,14 +36,14 @@ class Stats {
     this.#dom = dom;
   }
 
-  #setStatusText(statusText) {
-    this.#status.textContent = statusText;
+  #setStatusText(statusCode) {
+    this.#status.textContent = statusTexts[statusCode];
     for (const className of this.#status.classList.values()) {
       if (className.startsWith("stats-section-text--")) {
         this.#status.classList.remove(className);
       }
     }
-    this.#status.classList.add(`stats-section-text--${statusText}`);
+    this.#status.classList.add(`stats-section-text--${statusCode}`);
   }
 }
 
