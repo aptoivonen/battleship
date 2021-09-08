@@ -12,6 +12,10 @@
     text-transform: uppercase;
   }
 
+  &-wrapper {
+    position: relative;
+  }
+
   &-grid {
     position: relative;
     display: grid;
