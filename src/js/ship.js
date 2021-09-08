@@ -1,4 +1,5 @@
 import isEqual from "lodash/isEqual";
+import sortBy from "lodash/sortBy";
 
 function validateConnectedPositions(shipPositions) {
   function isNorthFacing(positions) {
@@ -86,7 +87,8 @@ class Ship {
   }
 
   isSunk() {
-    return isEqual(this.#positions.sort(), this.#hits.sort());
+    // return isEqual(this.#positions.sort(), this.#hits.sort());
+    return isEqual(sortBy(this.#positions), sortBy(this.#hits));
   }
 
   hasPosition([x, y]) {
