@@ -8,7 +8,9 @@
   --ship-width: var(--ship-size);
   --ship-height: var(--ship-size);
   position: absolute;
-  top: calc(var(--square-height) * var(--row) + var(--ship-padding));
+  top: calc(
+    var(--square-height) * var(--ship-rear-location) + var(--ship-padding)
+  );
   left: calc(var(--square-width) * var(--column) + var(--ship-padding));
   width: calc(
     var(--square-width) * var(--ship-width) - 2 * var(--ship-padding)
@@ -42,6 +44,7 @@
   }
 
   &--northwards {
+    --ship-rear-location: var(--row) - var(--ship-height) + 1;
     --ship-width: 1;
     --north-west-border: #{variables.$ship-front-border-radius};
     --north-east-border: #{variables.$ship-front-border-radius};
@@ -50,6 +53,7 @@
   }
 
   &--eastwards {
+    --ship-rear-location: var(--row);
     --ship-height: 1;
     --north-west-border: #{variables.$ship-rear-border-radius};
     --north-east-border: #{variables.$ship-front-border-radius};
