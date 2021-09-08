@@ -1,3 +1,5 @@
+@use "variables";
+
 .board-placement {
   position: absolute;
   top: 0;
@@ -6,18 +8,8 @@
   padding: 1rem;
   background: #ddd;
 
-  &-title {
-  }
-
   &-type {
-  }
-
-  &-number {
-  }
-
-  &-radios {
-  }
-
-  &-label {
+    font-weight: bold;
+    text-transform: capitalize;
   }
 }
