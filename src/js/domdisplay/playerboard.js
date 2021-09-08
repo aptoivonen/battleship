@@ -141,12 +141,6 @@ class PlayerBoard {
       const shipType = this.#findShipType(ship.positions.length);
       shipElement.classList.add(`ship--${shipType}`);
       const shipDirection = this.#findShipDirection(ship.positions);
-      console.log(
-        "ship type, location, direction:",
-        shipType,
-        ship.positions[0],
-        shipDirection
-      );
       shipElement.classList.add(`ship--${shipDirection}`);
       shipElement.style.setProperty("--column", ship.positions[0][0]);
       shipElement.style.setProperty("--row", ship.positions[0][1]);
@@ -197,7 +191,6 @@ class PlayerBoard {
       location: [column, row],
       direction: this.#shipPlacementInfo.shipDirectionSelection,
     };
-    console.log("placement", placementObject);
     if (!this.#game.canPlaceShip(placementObject)) {
       return;
     }
@@ -208,7 +201,6 @@ class PlayerBoard {
     if (this.#game.getStatus() !== "placement") {
       return;
     }
-    console.log("input value:", event.target.value);
     this.#shipPlacementInfo.shipDirectionSelection = event.target.value;
   }
 }
