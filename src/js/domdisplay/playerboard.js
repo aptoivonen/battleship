@@ -98,7 +98,9 @@ class PlayerBoard {
         .classList.remove("show");
       return;
     }
-
+    this.#basicBoard.dom
+      .querySelector(".board-placement")
+      .classList.add("show");
     const gameShipInfo = this.#game.getShipInfo();
     const shipTypeToPlace = findKey(
       gameShipInfo,
