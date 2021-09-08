@@ -87,7 +87,6 @@ class Ship {
   }
 
   isSunk() {
-    // return isEqual(this.#positions.sort(), this.#hits.sort());
     return isEqual(sortBy(this.#positions), sortBy(this.#hits));
   }
 
