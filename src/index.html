@@ -131,107 +131,159 @@
               </div>
               <div class="board player-board">
                 <p class="board-title">Player's Board</p>
-                <div class="board-grid">
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
-                  <div class="board-cell"></div>
+
+                <div class="board-wrapper">
+                  <div class="board-placement hide show">
+                    <span class="board-placement-title">
+                      Place
+                      <span
+                        class="board-placement-type"
+                        id="board-placement-type"
+                      ></span>
+                      <span
+                        class="board-placement-number"
+                        id="board-placement-number"
+                      ></span>
+                    </span>
+                    <fieldset class="board-placement-radios">
+                      <div class="board-placement-radio-group">
+                        <input
+                          type="radio"
+                          value="eastwards"
+                          name="direction"
+                          id="eastwards-direction-radio"
+                        />
+                        <label
+                          class="board-placement-label"
+                          for="eastwards-direction-radio"
+                          >Horizontal</label
+                        >
+                      </div>
+                      <div class="board-placement-radio-group">
+                        <input
+                          type="radio"
+                          value="northwards"
+                          name="direction"
+                          id="northwards-direction-radio"
+                        />
+                        <label
+                          class="board-placement-label"
+                          for="northwards-direction-radio"
+                          >Vertical</label
+                        >
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="board-grid">
+                    <div
+                      class="ship ship--carrier ship--northwards"
+                      style="--column: 1; --row: 0"
+                    ></div>
+                    <div
+                      class="ship ship--cruiser ship--eastwards"
+                      style="--column: 5; --row: 0"
+                    ></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                    <div class="board-cell"></div>
+                  </div>
                 </div>
               </div>
             </div>
